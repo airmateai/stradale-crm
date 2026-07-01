@@ -372,6 +372,51 @@ tr:hover td{background:var(--gd);cursor:pointer}
 .empty-icon{font-size:36px;margin-bottom:10px;opacity:.35}
 
 @media(max-width:1200px){.stats{grid-template-columns:repeat(2,1fr)}.kb{grid-template-columns:repeat(2,1fr)}}
+
+/* ─── MOBILE ─── */
+#mob-toggle{display:none;position:fixed;top:14px;left:14px;z-index:8000;background:var(--bg2);border:1px solid var(--gb);border-radius:8px;width:40px;height:40px;align-items:center;justify-content:center;cursor:pointer;color:var(--gold)}
+#mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3000}
+
+@media(max-width:768px){
+  html,body{overflow:hidden auto}
+  #app{flex-direction:column}
+  #mob-toggle{display:flex}
+  #mob-overlay.open{display:block}
+  .sb{
+    position:fixed;top:0;left:-280px;height:100vh;z-index:4000;
+    transition:left .3s ease;width:260px;
+  }
+  .sb.open{left:0}
+  .main{width:100%;height:100vh;overflow:hidden}
+  .topbar{padding:14px 16px 14px 64px;gap:8px}
+  .topbar-title{font-size:17px}
+  .topbar-date{display:none}
+  .gsearch{width:auto;flex:1}
+  .content{height:calc(100vh - 57px);overflow-y:auto}
+  .page{padding:20px 16px}
+  .ph{flex-direction:column;align-items:flex-start;gap:14px;margin-bottom:20px;padding-bottom:16px}
+  .ph-right{width:100%;justify-content:flex-end}
+  .stats{grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
+  .sc{padding:16px 14px}
+  .sc-value{font-size:28px}
+  .sc-icon{display:none}
+  .dg,.dg3{grid-template-columns:1fr;gap:14px}
+  .features,.psummary{grid-template-columns:1fr 1fr}
+  .kb{grid-template-columns:1fr;gap:12px}
+  .tcard{overflow-x:auto}
+  table{min-width:580px}
+  .rg{grid-template-columns:1fr}
+  .modal{padding:24px 18px;width:100%;max-width:100%;border-radius:12px;margin:0}
+  .mover{padding:12px}
+  .fg{grid-template-columns:1fr}
+  .fgroup.full{grid-column:1}
+  .cd-info-grid{grid-template-columns:1fr 1fr}
+  .chart-wrap{height:160px}
+  .cal-week{grid-template-columns:40px repeat(7,1fr)}
+  .cal-head{padding:8px 4px;font-size:9px}
+  .lbox{width:100%;padding:40px 24px;margin:0 12px}
+  #gresults{right:0;width:calc(100vw - 32px);left:16px}
+}
 </style>
 </head>
 <body>
@@ -389,6 +434,10 @@ tr:hover td{background:var(--gd);cursor:pointer}
     <div class="lerr" id="lerr">Contrase&#241;a incorrecta</div>
   </div>
 </div>
+
+<!-- MOBILE TOGGLE -->
+<button id="mob-toggle" onclick="toggleSidebar()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg></button>
+<div id="mob-overlay" onclick="toggleSidebar()"></div>
 
 <!-- APP -->
 <div id="app">
@@ -791,7 +840,7 @@ const H = {apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':'application/js
 
 const USERS = {
   fernando:   {pass:'Stradale2024',name:'Fernando de Andrés',role:'Director',initials:'FA'},
-  secretaria: {pass:'Secretaria24',name:'Secretaría',role:'Gestión',initials:'SC'}
+  andrea:     {pass:'Secretaria24',name:'Andrea',role:'Asistenta',initials:'AN'}
 };
 
 let C=[],L=[],G=[],P=[],EMP=[],LEADS=[];
@@ -799,6 +848,10 @@ let eId={c:null,l:null,g:null,p:null,emp:null,lead:null};
 let calOffset=0;
 let charts={};
 let currentUser=null;
+
+// ── SIDEBAR MOBILE ──
+function toggleSidebar(){document.querySelector('.sb').classList.toggle('open');document.getElementById('mob-overlay').classList.toggle('open');}
+function closeSidebar(){document.querySelector('.sb').classList.remove('open');document.getElementById('mob-overlay').classList.remove('open');}
 
 // ── LOGIN ──
 function initialsOf(name){return(name||'').trim().split(/\s+/).slice(0,2).map(n=>n[0]).join('').toUpperCase();}
@@ -862,6 +915,7 @@ function nav(id,el){
   document.getElementById('page-'+id).classList.add('active');
   el.classList.add('active');
   document.getElementById('tb-title').textContent=PAGE_TITLES[id]||id;
+  closeSidebar();
 }
 
 // ── SUPABASE ──
