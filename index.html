@@ -913,12 +913,13 @@ function applyRoleUI(){
   document.querySelectorAll('.worker-only').forEach(e=>e.style.display=currentUser.isAdmin?'none':'');
   // Andrea no ve el dashboard
   if(currentUser.noDash){
-    document.querySelector('.ni[data-page="dashboard"]').style.display='none';
-    document.querySelector('.sb-section.admin-only').style.display='none';
+    const dashNav=document.querySelector('.ni[data-page="dashboard"]');
+    if(dashNav) dashNav.style.display='none';
   }
   if(currentUser.isAdmin){
     const startPage=currentUser.noDash?'clientes':'dashboard';
-    nav(startPage,document.querySelector(`.ni[data-page="${startPage}"]`));
+    const startEl=document.querySelector(`.ni[data-page="${startPage}"]`);
+    nav(startPage,startEl);
   } else {
     nav('misleads',document.querySelector('.ni[data-page="misleads"]'));
   }
