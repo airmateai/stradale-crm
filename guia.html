@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía Stradale CRM</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0e1a;--bg2:#0f1422;--bg3:#141929;--bg4:#1a2035;--gold:#C8A84C;--gold2:#E0C070;--gb:rgba(200,168,76,0.2);--gd:rgba(200,168,76,0.08);--text:#F0EEF8;--text2:#8A90B0;--text3:#4A5070;--green:#4A8A6A;--red:#C0604A;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+
+/* HERO */
+.hero{
+  background:radial-gradient(ellipse at 50% -10%,rgba(200,168,76,.12) 0%,transparent 65%),var(--bg2);
+  border-bottom:1px solid var(--gb);
+  padding:80px 40px 60px;text-align:center;
+}
+.hero-logo{font-family:'Playfair Display',serif;font-size:42px;font-weight:700;color:var(--gold);letter-spacing:6px;margin-bottom:6px}
+.hero-sub{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--text3);margin-bottom:32px}
+.hero-title{font-family:'Playfair Display',serif;font-size:28px;color:var(--text);margin-bottom:12px}
+.hero-desc{font-size:15px;color:var(--text2);max-width:600px;margin:0 auto 36px}
+.cta-link{
+  display:inline-block;padding:14px 36px;
+  background:linear-gradient(135deg,var(--gold),#9A7E32);
+  color:#0b0a07;font-weight:700;font-size:12px;letter-spacing:3px;text-transform:uppercase;
+  border-radius:8px;text-decoration:none;transition:all .2s;
+}
+.cta-link:hover{background:linear-gradient(135deg,var(--gold2),var(--gold));transform:translateY(-2px);box-shadow:0 8px 28px rgba(200,168,76,.3)}
+
+/* ACCESOS */
+.accesos{background:var(--bg3);border:1px solid var(--gb);border-radius:12px;padding:28px 32px;max-width:540px;margin:32px auto 0;text-align:left}
+.accesos-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text3);margin-bottom:18px}
+.acc-row{display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid rgba(200,168,76,.08)}
+.acc-row:last-child{border-bottom:none}
+.acc-badge{width:38px;height:38px;border-radius:50%;background:var(--gd);border:1px solid var(--gb);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--gold);flex-shrink:0}
+.acc-info{flex:1}
+.acc-name{font-size:14px;font-weight:500;color:var(--text)}
+.acc-creds{font-size:12px;color:var(--text3);margin-top:2px}
+.acc-creds strong{color:var(--gold)}
+
+/* LAYOUT */
+.wrap{max-width:960px;margin:0 auto;padding:60px 24px}
+.section{margin-bottom:72px}
+.section-tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.section-title{font-family:'Playfair Display',serif;font-size:32px;color:var(--text);margin-bottom:16px}
+.section-desc{font-size:15px;color:var(--text2);max-width:680px;line-height:1.8;margin-bottom:36px}
+
+/* INDEX NAV */
+.nav-index{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:60px}
+.nav-card{
+  background:var(--bg2);border:1px solid var(--gb);border-radius:12px;padding:22px 20px;
+  text-decoration:none;transition:all .2s;
+}
+.nav-card:hover{border-color:var(--gold);background:var(--gd);transform:translateY(-2px)}
+.nav-icon{font-size:26px;margin-bottom:10px}
+.nav-card-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.nav-card-sub{font-size:12px;color:var(--text3)}
+
+/* FEATURE CARDS */
+.features{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:32px}
+.fc{background:var(--bg2);border:1px solid var(--gb);border-radius:12px;padding:26px 24px}
+.fc-icon{font-size:28px;margin-bottom:12px}
+.fc-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px}
+.fc-desc{font-size:13px;color:var(--text2);line-height:1.7}
+
+/* STEPS */
+.steps{counter-reset:step}
+.step{display:flex;gap:20px;margin-bottom:28px;align-items:flex-start}
+.step-num{
+  width:36px;height:36px;border-radius:50%;flex-shrink:0;
+  background:var(--gd);border:1px solid var(--gb);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--gold);
+}
+.step-body{flex:1;padding-top:6px}
+.step-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.step-desc{font-size:13px;color:var(--text2);line-height:1.7}
+
+/* HIGHLIGHT BOX */
+.hbox{background:var(--gd);border:1px solid var(--gb);border-left:3px solid var(--gold);border-radius:8px;padding:18px 20px;margin:24px 0}
+.hbox-title{font-size:12px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.hbox p{font-size:13px;color:var(--text2);line-height:1.7}
+
+/* TABLE GUIDE */
+.tg{width:100%;border-collapse:collapse;margin:20px 0}
+.tg th{padding:12px 16px;text-align:left;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--gb);font-weight:500}
+.tg td{padding:13px 16px;font-size:13px;color:var(--text);border-bottom:1px solid rgba(200,168,76,.06);vertical-align:top}
+.tg tr:last-child td{border-bottom:none}
+.tg td:first-child{color:var(--gold);font-weight:500;white-space:nowrap}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
+.bg-green{background:rgba(74,138,106,.15);color:#6AAA80;border:1px solid rgba(74,138,106,.3)}
+.bg-gold{background:var(--gd);color:var(--gold);border:1px solid var(--gb)}
+.bg-blue{background:rgba(74,114,160,.15);color:#6A9AC8;border:1px solid rgba(74,114,160,.3)}
+.bg-red{background:rgba(192,96,74,.15);color:#D07060;border:1px solid rgba(192,96,74,.3)}
+.bg-gray{background:rgba(106,96,80,.12);color:var(--text3);border:1px solid rgba(106,96,80,.3)}
+
+/* DIVIDER */
+.div{border:none;border-top:1px solid var(--gb);margin:60px 0}
+
+/* FOOTER */
+.footer{text-align:center;padding:40px 24px;color:var(--text3);font-size:12px;border-top:1px solid var(--gb)}
+.footer strong{color:var(--gold)}
+
+@media(max-width:700px){.features{grid-template-columns:1fr}.nav-index{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-logo">STRADALE</div>
+  <div class="hero-sub">Agency CRM — Guía de Uso</div>
+  <h1 class="hero-title">Tu CRM personal, Fernando</h1>
+  <p class="hero-desc">Todo lo que necesitas para gestionar tus clientes, llamadas, proyectos y equipo en un solo lugar — diseñado específicamente para Stradale Agency.</p>
+  <a href="https://airmateai.github.io/stradale-crm/" target="_blank" class="cta-link">Abrir el CRM →</a>
+
+  <div class="accesos">
+    <div class="accesos-title">Accesos al sistema</div>
+    <div class="acc-row">
+      <div class="acc-badge">FA</div>
+      <div class="acc-info">
+        <div class="acc-name">Fernando de Andrés — Director</div>
+        <div class="acc-creds">Usuario: <strong>fernando</strong> &nbsp;·&nbsp; Contraseña: <strong>Stradale2024</strong></div>
+      </div>
+    </div>
+    <div class="acc-row">
+      <div class="acc-badge">SC</div>
+      <div class="acc-info">
+        <div class="acc-name">Secretaría — Gestión</div>
+        <div class="acc-creds">Usuario: <strong>secretaria</strong> &nbsp;·&nbsp; Contraseña: <strong>Secretaria24</strong></div>
+      </div>
+    </div>
+    <div class="acc-row">
+      <div class="acc-badge" style="font-size:11px">👤</div>
+      <div class="acc-info">
+        <div class="acc-name">Comerciales / Trabajadores</div>
+        <div class="acc-creds">Tú les creas el usuario desde la sección <strong>Empleados</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ÍNDICE -->
+<div class="wrap">
+  <div class="section">
+    <div class="section-tag">Contenido de esta guía</div>
+    <div class="section-title">¿Qué encontrarás aquí?</div>
+    <div class="nav-index">
+      <a class="nav-card" href="#dashboard"><div class="nav-icon">📊</div><div class="nav-card-title">Dashboard</div><div class="nav-card-sub">Vista general y métricas</div></a>
+      <a class="nav-card" href="#clientes"><div class="nav-icon">👥</div><div class="nav-card-title">Clientes</div><div class="nav-card-sub">Base de datos de contactos</div></a>
+      <a class="nav-card" href="#llamadas"><div class="nav-icon">📞</div><div class="nav-card-title">Llamadas</div><div class="nav-card-sub">Agenda LinkedIn, Zoom, Meet</div></a>
+      <a class="nav-card" href="#grabaciones"><div class="nav-icon">🎬</div><div class="nav-card-title">Grabaciones</div><div class="nav-card-sub">Archivo de reuniones</div></a>
+      <a class="nav-card" href="#proyectos"><div class="nav-icon">📋</div><div class="nav-card-title">Proyectos</div><div class="nav-card-sub">Pipeline y estado de trabajos</div></a>
+      <a class="nav-card" href="#equipo"><div class="nav-icon">🏢</div><div class="nav-card-title">Equipo y Reportes</div><div class="nav-card-sub">Empleados, leads y rendimiento</div></a>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="section" id="dashboard">
+    <div class="section-tag">01 — Principal</div>
+    <div class="section-title">Dashboard</div>
+    <div class="section-desc">Es lo primero que ves al entrar. De un vistazo tienes el estado completo de tu agencia: clientes activos, llamadas pendientes, proyectos en curso y el valor total de tu pipeline.</div>
+    <div class="features">
+      <div class="fc">
+        <div class="fc-icon">📊</div>
+        <div class="fc-title">4 métricas clave</div>
+        <div class="fc-desc">Clientes registrados, llamadas pendientes, proyectos activos y valor total del pipeline (propuestas + trabajos en curso). Se actualizan en tiempo real.</div>
+      </div>
+      <div class="fc">
+        <div class="fc-icon">📞</div>
+        <div class="fc-title">Próximas llamadas</div>
+        <div class="fc-desc">Las 5 llamadas más urgentes aparecen ordenadas por fecha. El punto de color cambia según urgencia: rojo = hoy, naranja = mañana, dorado = esta semana.</div>
+      </div>
+      <div class="fc">
+        <div class="fc-icon">📋</div>
+        <div class="fc-title">Proyectos recientes</div>
+        <div class="fc-desc">Últimos 5 proyectos añadidos con su estado y valor. Haz clic en cualquiera para editarlo directamente desde el dashboard.</div>
+      </div>
+      <div class="fc">
+        <div class="fc-icon">📈</div>
+        <div class="fc-title">Gráficas</div>
+        <div class="fc-desc">Donut chart con el valor de tu pipeline por estado (propuesta, en curso, revisión, cerrado) y barras con el volumen de clientes por etapa.</div>
+      </div>
+    </div>
+    <div class="hbox">
+      <div class="hbox-title">Consejo</div>
+      <p>El dashboard se actualiza solo cada vez que entras o guardas un dato nuevo. No hace falta recargar la página.</p>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- CLIENTES -->
+  <div class="section" id="clientes">
+    <div class="section-tag">02 — Gestión</div>
+    <div class="section-title">Clientes</div>
+    <div class="section-desc">Tu base de datos completa de contactos y empresas. Cada cliente tiene su ficha con toda la información relevante, historial de llamadas, grabaciones y proyectos asociados.</div>
+
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Añadir un cliente</div><div class="step-desc">Pulsa "Nuevo Cliente" (botón dorado arriba a la derecha). Rellena nombre, empresa, email, teléfono, LinkedIn y estado. Los campos de etiquetas te permiten clasificarlos (ej: "LinkedIn, caliente, referido").</div></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Estados del cliente</div><div class="step-desc">Cada cliente tiene un estado que puedes cambiar cuando evoluciona la relación comercial.</div></div></div>
+    </div>
+
+    <table class="tg">
+      <thead><tr><th>Estado</th><th>Significado</th><th>Cuándo usarlo</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge bg-gold">Prospecto</span></td><td>Lead en proceso</td><td>Contacto inicial, aún no es cliente</td></tr>
+        <tr><td><span class="badge bg-green">Activo</span></td><td>Cliente actual</td><td>Tiene contrato o proyecto en marcha</td></tr>
+        <tr><td><span class="badge bg-red">Pausado</span></td><td>En espera</td><td>Ha parado temporalmente, puede volver</td></tr>
+        <tr><td><span class="badge bg-gray">Cerrado</span></td><td>Proyecto terminado</td><td>Relación finalizada (por ahora)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="step" style="margin-top:28px"><div class="step-num">3</div><div class="step-body"><div class="step-title">Ficha completa del cliente</div><div class="step-desc">Haz clic en cualquier fila de la tabla para ver la ficha detallada. Muestra todas las llamadas, grabaciones y proyectos relacionados con ese cliente, además del campo "Pago mensual" que indica cuánto te paga al mes.</div></div></div>
+
+    <div class="hbox">
+      <div class="hbox-title">Búsqueda y filtros</div>
+      <p>Usa la barra de búsqueda para encontrar clientes por nombre, empresa o email. El selector de la derecha filtra por estado. También puedes usar la búsqueda global (arriba a la derecha) para buscar en todo el CRM a la vez.</p>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- LLAMADAS -->
+  <div class="section" id="llamadas">
+    <div class="section-tag">03 — Gestión</div>
+    <div class="section-title">Llamadas</div>
+    <div class="section-desc">Agenda centralizada de todas tus llamadas de LinkedIn, Zoom, Google Meet, presenciales o por teléfono. Nunca más perderás una reunión importante.</div>
+
+    <div class="features">
+      <div class="fc">
+        <div class="fc-icon">📋</div>
+        <div class="fc-title">Vista Lista</div>
+        <div class="fc-desc">Tabla con todas las llamadas ordenadas por fecha. Muestra urgencia con colores: <strong style="color:#E08070">rojo = hoy</strong>, <strong style="color:#D0A060">naranja = mañana</strong>, <strong style="color:var(--gold)">dorado = esta semana</strong>.</div>
+      </div>
+      <div class="fc">
+        <div class="fc-icon">📅</div>
+        <div class="fc-title">Vista Calendario</div>
+        <div class="fc-desc">Pulsa "Vista Calendario" para ver la semana actual con todas las llamadas posicionadas por día. Navega entre semanas con las flechas.</div>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Agendar una llamada</div><div class="step-desc">Pulsa "Nueva Llamada". Rellena: cliente/contacto, fecha, hora, tipo (LinkedIn, Zoom, etc.) y añade el enlace a la reunión. En "Notas previas" escribe los temas que quieres tratar.</div></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Post-llamada</div><div class="step-desc">Después de la reunión, edita la llamada: cambia el estado a "Completada" y rellena el "Resumen post-llamada" con los acuerdos alcanzados y próximos pasos. Así tienes todo documentado.</div></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Enlace rápido a la reunión</div><div class="step-desc">Si añadiste el enlace de Zoom/Meet, aparece un botón directo en la tabla para entrar a la reunión con un solo clic, sin buscar el enlace en el email.</div></div></div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- GRABACIONES -->
+  <div class="section" id="grabaciones">
+    <div class="section-tag">04 — Gestión</div>
+    <div class="section-title">Grabaciones</div>
+    <div class="section-desc">Archivo de todas las reuniones grabadas. Guarda el enlace de Drive, Loom o Dropbox junto con el resumen de la reunión para que puedas volver a consultarlo cuando necesites.</div>
+
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Guardar una grabación</div><div class="step-desc">Pulsa "Nueva Grabación". Añade el título (ej: "Reunión Inicial - Empresa XYZ"), el cliente, la fecha, duración y el enlace donde está guardada la grabación (Google Drive, Loom, Dropbox…).</div></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Acceder a la grabación</div><div class="step-desc">Desde la tarjeta de cada grabación hay un botón "Ver" que abre el enlace directamente. Ideal para revisar antes de una llamada de seguimiento.</div></div></div>
+    </div>
+
+    <div class="hbox">
+      <div class="hbox-title">Consejo</div>
+      <p>Usa el campo "Resumen / Notas" para apuntar los puntos clave de la reunión. Así no necesitas ver la grabación entera cada vez — solo lees el resumen.</p>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- PROYECTOS -->
+  <div class="section" id="proyectos">
+    <div class="section-tag">05 — Gestión</div>
+    <div class="section-title">Proyectos</div>
+    <div class="section-desc">Pipeline visual en formato Kanban de todos tus trabajos: desde las propuestas enviadas hasta los proyectos cerrados. Con un vistazo sabes exactamente cuánto dinero tienes en cada etapa.</div>
+
+    <div class="features">
+      <div class="fc">
+        <div class="fc-icon">💰</div>
+        <div class="fc-title">3 métricas de valor</div>
+        <div class="fc-desc">Arriba del kanban: <strong>Pipeline activo</strong> (propuesta + en curso + revisión), <strong>Cerrado/Ganado</strong> y <strong>Total gestionado</strong>. Siempre sabes cuánto tienes en juego.</div>
+      </div>
+      <div class="fc">
+        <div class="fc-icon">🗂️</div>
+        <div class="fc-title">4 columnas Kanban</div>
+        <div class="fc-desc">Propuesta → En Curso → En Revisión → Cerrado. Cada tarjeta muestra el nombre del proyecto, cliente y valor. Edita el estado para moverlo de columna.</div>
+      </div>
+    </div>
+
+    <table class="tg">
+      <thead><tr><th>Estado</th><th>Significado</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge bg-gold">Propuesta</span></td><td>Has enviado la propuesta, esperando respuesta del cliente</td></tr>
+        <tr><td><span class="badge bg-green">En Curso</span></td><td>Proyecto aprobado y en ejecución activa</td></tr>
+        <tr><td><span class="badge bg-blue">En Revisión</span></td><td>Entregado al cliente, esperando feedback o aprobación final</td></tr>
+        <tr><td><span class="badge bg-gray">Cerrado</span></td><td>Proyecto finalizado y cobrado</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="div">
+
+  <!-- EQUIPO -->
+  <div class="section" id="equipo">
+    <div class="section-tag">06 — Equipo</div>
+    <div class="section-title">Empleados, Leads y Reportes</div>
+    <div class="section-desc">Sistema completo para gestionar tu equipo comercial. Tú creas sus accesos, ellos añaden leads desde su propio panel, y tú ves los resultados en tiempo real en Reportes.</div>
+
+    <div class="hbox" style="margin-bottom:32px">
+      <div class="hbox-title">¿Cómo funciona el sistema de equipo?</div>
+      <p>Fernando crea los empleados → Los empleados entran con su usuario y contraseña → Añaden sus leads → Fernando ve los reportes con todos los leads y estadísticas de cada uno.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Crear un empleado (tú — como director)</div>
+          <div class="step-desc">Ve a la sección <strong>Empleados</strong> en el menú lateral. Pulsa "Nuevo Empleado" y rellena: nombre completo, usuario (lo que va a escribir para entrar, ej: "maria") y contraseña. El empleado ya puede entrar al CRM.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">El empleado entra al CRM</div>
+          <div class="step-desc">En la pantalla de login escribe su usuario y contraseña. Ve una versión simplificada del CRM con solo su sección "Mis Leads". No ve ni clientes, ni llamadas, ni proyectos.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">El empleado añade leads</div>
+          <div class="step-desc">Desde "Mis Leads" pulsa "Nuevo Lead" y rellena: nombre del lead, teléfono, email, estado (Nuevo / Contactado / Respondido / Cerrado) y notas. Todos sus leads quedan guardados y asociados a su nombre.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Tú ves los resultados en Reportes</div>
+          <div class="step-desc">Ve a <strong>Reportes</strong>. Verás una tarjeta por cada empleado con: total leads añadidos, cuántos ha contactado y cuántos han respondido. Debajo, la tabla completa con nombre, teléfono y estado de cada lead.</div>
+        </div>
+      </div>
+    </div>
+
+    <table class="tg" style="margin-top:28px">
+      <thead><tr><th>Estado Lead</th><th>Significado</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge bg-gray">Nuevo</span></td><td>Lead añadido, aún no se ha contactado</td></tr>
+        <tr><td><span class="badge bg-blue">Contactado</span></td><td>El comercial le ha enviado mensaje o llamado</td></tr>
+        <tr><td><span class="badge bg-gold">Respondido</span></td><td>El lead ha respondido y hay conversación activa</td></tr>
+        <tr><td><span class="badge bg-green">Cerrado</span></td><td>Lead convertido en cliente o descartado</td></tr>
+      </tbody>
+    </table>
+
+    <div class="hbox" style="margin-top:28px">
+      <div class="hbox-title">Empleados de prueba ya creados</div>
+      <p>Tienes dos comerciales de demo listos: <strong style="color:var(--gold)">María García</strong> (usuario: <strong style="color:var(--gold)">maria</strong> / contraseña: <strong style="color:var(--gold)">Maria2024</strong>) y <strong style="color:var(--gold)">Carlos Ruiz</strong> (usuario: <strong style="color:var(--gold)">carlos</strong> / contraseña: <strong style="color:var(--gold)">Carlos2024</strong>). Ya tienen leads añadidos — revisa Reportes para verlos.</p>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- BÚSQUEDA GLOBAL -->
+  <div class="section">
+    <div class="section-tag">07 — Productividad</div>
+    <div class="section-title">Búsqueda Global</div>
+    <div class="section-desc">El buscador que aparece arriba a la derecha (la lupa) busca en <strong>todo el CRM a la vez</strong>: clientes, llamadas y proyectos. Ideal para encontrar cualquier cosa en segundos sin saber en qué sección está.</div>
+    <div class="hbox">
+      <div class="hbox-title">Ejemplo de uso</div>
+      <p>Recibes un mensaje de "Laura" — escribes "Laura" en el buscador y aparece la ficha de cliente, sus llamadas y proyectos relacionados. Todo en un clic.</p>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- RESUMEN -->
+  <div class="section">
+    <div class="section-tag">Resumen</div>
+    <div class="section-title">Lo más importante</div>
+    <table class="tg">
+      <thead><tr><th>Acción</th><th>Dónde</th><th>Atajo</th></tr></thead>
+      <tbody>
+        <tr><td>Añadir cliente nuevo</td><td>Clientes → Nuevo Cliente</td><td>Botón dorado arriba derecha</td></tr>
+        <tr><td>Agendar una llamada</td><td>Llamadas → Nueva Llamada</td><td>Botón dorado arriba derecha</td></tr>
+        <tr><td>Ver llamadas de la semana</td><td>Llamadas → Vista Calendario</td><td>Botón "Vista Calendario"</td></tr>
+        <tr><td>Marcar llamada como completada</td><td>Llamadas → Editar (lápiz)</td><td>Cambiar estado a "Completada"</td></tr>
+        <tr><td>Ver ficha completa de un cliente</td><td>Clientes → clic en la fila</td><td>Clic directo en la fila</td></tr>
+        <tr><td>Crear acceso para un comercial</td><td>Empleados → Nuevo Empleado</td><td>Solo visible como director</td></tr>
+        <tr><td>Ver rendimiento del equipo</td><td>Reportes</td><td>Solo visible como director</td></tr>
+        <tr><td>Buscar cualquier cosa</td><td>Barra de búsqueda (arriba derecha)</td><td>Escribe directamente</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="footer">
+  Desarrollado exclusivamente para <strong>Stradale Agency</strong> por Airmate &nbsp;·&nbsp; <a href="https://airmateai.github.io/stradale-crm/" target="_blank" style="color:var(--gold)">Acceder al CRM →</a>
+</div>
+
+</body>
+</html>
