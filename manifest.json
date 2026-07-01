@@ -1,0 +1,22 @@
+{
+  "name": "Stradale CRM",
+  "short_name": "Stradale",
+  "description": "CRM privado Stradale Agency",
+  "start_url": "/stradale-crm/",
+  "display": "standalone",
+  "background_color": "#0b0e1a",
+  "theme_color": "#0b0e1a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192x192/0f1422/C8A84C?text=S",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://via.placeholder.com/512x512/0f1422/C8A84C?text=S",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

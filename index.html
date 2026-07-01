@@ -2,7 +2,13 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Stradale CRM">
+<meta name="theme-color" content="#0b0e1a">
+<link rel="apple-touch-icon" href="https://via.placeholder.com/180x180/0f1422/C8A84C?text=S">
+<link rel="manifest" href="manifest.json">
 <title>Stradale CRM</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -380,7 +386,8 @@ tr:hover td{background:var(--gd);cursor:pointer}
 @media(max-width:768px){
   html,body{overflow:hidden auto}
   #app{flex-direction:column}
-  #mob-toggle{display:flex}
+  #mob-toggle{display:flex;top:max(14px,env(safe-area-inset-top,14px))}
+  .topbar{padding-top:max(14px,env(safe-area-inset-top,14px))}
   #mob-overlay.open{display:block}
   .sb{
     position:fixed;top:0;left:-280px;height:100vh;z-index:4000;
