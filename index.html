@@ -1012,8 +1012,8 @@ function renderAll(){renderDash();renderC();renderL();renderG();renderP();render
 // ── DASHBOARD ──
 function renderDash(){
   const pending=L.filter(l=>l.estado==='pendiente');
-  const activeProy=P.filter(p=>p.estado==='en curso');
-  const pipeline=P.filter(p=>p.estado==='propuesta'||p.estado==='en curso').reduce((a,p)=>a+(p.valor||0),0);
+  const activeProy=P.filter(p=>(p.estado||'').toLowerCase()==='en curso');
+  const pipeline=P.filter(p=>{const e=(p.estado||'').toLowerCase();return e==='propuesta'||e==='en curso';}).reduce((a,p)=>a+(p.valor||0),0);
 
   const ingresos=C.filter(c=>c.estado==='activo'||c.estado==='Activo').reduce((a,c)=>a+(c.pago_mensual||0),0);
   const now=new Date();const mes=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
@@ -1342,11 +1342,11 @@ const KCOLS=[{key:'propuesta',label:'Propuesta'},{key:'en curso',label:'En Curso
 function renderP(){
   // Summary cards
   const total=P.reduce((a,p)=>a+(p.valor||0),0);
-  const pipeline=P.filter(p=>p.estado!=='cerrado').reduce((a,p)=>a+(p.valor||0),0);
-  const closed=P.filter(p=>p.estado==='cerrado').reduce((a,p)=>a+(p.valor||0),0);
+  const pipeline=P.filter(p=>(p.estado||'').toLowerCase()!=='cerrado').reduce((a,p)=>a+(p.valor||0),0);
+  const closed=P.filter(p=>(p.estado||'').toLowerCase()==='cerrado').reduce((a,p)=>a+(p.valor||0),0);
   document.getElementById('p-summary').innerHTML=`
     <div class="pscard"><div class="pscard-label">Total Pipeline</div><div class="pscard-value">${fmtE(pipeline)}</div><div class="pscard-sub">propuesta + activo + revisión</div></div>
-    <div class="pscard"><div class="pscard-label">Cerrado / Ganado</div><div class="pscard-value">${fmtE(closed)}</div><div class="pscard-sub">${P.filter(p=>p.estado==='cerrado').length} proyectos</div></div>
+    <div class="pscard"><div class="pscard-label">Cerrado / Ganado</div><div class="pscard-value">${fmtE(closed)}</div><div class="pscard-sub">${P.filter(p=>(p.estado||'').toLowerCase()==='cerrado').length} proyectos</div></div>
     <div class="pscard"><div class="pscard-label">Total Gestionado</div><div class="pscard-value">${fmtE(total)}</div><div class="pscard-sub">${P.length} proyectos</div></div>
   `;
   document.getElementById('kanban').innerHTML=KCOLS.map(col=>{
