@@ -858,7 +858,7 @@ const H = {apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':'application/js
 
 const USERS = {
   fernando:   {pass:'Stradale2024',name:'Fernando de Andrés',role:'Director',initials:'FA'},
-  andrea:     {pass:'Secretaria24',name:'Andrea',role:'Asistenta',initials:'AN'}
+  andrea:     {pass:'Secretaria24',name:'Andrea',role:'Asistenta',initials:'AN',noDash:true}
 };
 
 let C=[],L=[],G=[],P=[],EMP=[],LEADS=[];
@@ -879,7 +879,7 @@ async function doLogin(){
   const pw=document.getElementById('lp').value;
   if(USERS[u]&&USERS[u].pass===pw){
     const info=USERS[u];
-    currentUser={isAdmin:true,id:null,name:info.name,role:info.role,initials:info.initials};
+    currentUser={isAdmin:true,id:null,name:info.name,role:info.role,initials:info.initials,noDash:info.noDash||false};
     finishLogin();
     return;
   }
@@ -911,8 +911,14 @@ function finishLogin(){
 function applyRoleUI(){
   document.querySelectorAll('.admin-only').forEach(e=>e.style.display=currentUser.isAdmin?'':'none');
   document.querySelectorAll('.worker-only').forEach(e=>e.style.display=currentUser.isAdmin?'none':'');
+  // Andrea no ve el dashboard
+  if(currentUser.noDash){
+    document.querySelector('.ni[data-page="dashboard"]').style.display='none';
+    document.querySelector('.sb-section.admin-only').style.display='none';
+  }
   if(currentUser.isAdmin){
-    nav('dashboard',document.querySelector('.ni[data-page="dashboard"]'));
+    const startPage=currentUser.noDash?'clientes':'dashboard';
+    nav(startPage,document.querySelector(`.ni[data-page="${startPage}"]`));
   } else {
     nav('misleads',document.querySelector('.ni[data-page="misleads"]'));
   }
