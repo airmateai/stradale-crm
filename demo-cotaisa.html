@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cotaisa CRM — Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#1c2330;--bg4:#21293a;
+  --green:#2ea043;--green2:#3fb950;--green3:rgba(46,160,67,.15);--gbd:rgba(46,160,67,.25);
+  --text:#e6edf3;--text2:#7d8590;--text3:#3d444d;
+  --amber:#d29922;--red:#f85149;--blue:#388bfd;
+  --r:8px;--sw:248px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow:hidden;font-size:14px}
+a{color:inherit;text-decoration:none}
+
+/* LOGIN */
+#login{position:fixed;inset:0;z-index:999;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.lbox{width:380px;padding:48px 40px;background:var(--bg2);border:1px solid var(--gbd);border-radius:12px}
+.llogo{display:flex;align-items:center;gap:12px;margin-bottom:32px}
+.llogo-icon{width:42px;height:42px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#fff;letter-spacing:-1px}
+.llogo-text{font-weight:700;font-size:17px;color:var(--text)}
+.llogo-sub{font-size:11px;color:var(--text2);margin-top:1px}
+.lh{font-size:20px;font-weight:600;color:var(--text);margin-bottom:6px}
+.lsub{font-size:13px;color:var(--text2);margin-bottom:28px}
+.llabel{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px}
+.linput{width:100%;padding:10px 12px;margin-bottom:14px;background:var(--bg3);border:1px solid var(--gbd);border-radius:var(--r);color:var(--text);font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s}
+.linput:focus{border-color:var(--green2)}
+.lbtn{width:100%;padding:11px;background:var(--green);color:#fff;border:none;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s;margin-top:4px}
+.lbtn:hover{background:var(--green2)}
+.lerr{text-align:center;color:var(--red);font-size:12px;margin-top:12px;display:none}
+
+/* APP */
+#app{display:none;height:100vh;flex-direction:row}
+
+/* SIDEBAR */
+.sb{width:var(--sw);flex-shrink:0;background:var(--bg2);border-right:1px solid rgba(125,133,144,.1);display:flex;flex-direction:column}
+.sb-brand{padding:20px 18px 16px;border-bottom:1px solid rgba(125,133,144,.08)}
+.sb-brand-top{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.sb-brand-dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)}
+.sb-brand-name{font-weight:700;font-size:15px;color:var(--text)}
+.sb-brand-sub{font-size:11px;color:var(--text2);padding-left:20px}
+.sb-nav{flex:1;padding:12px 8px;display:flex;flex-direction:column;gap:1px;overflow-y:auto}
+.sb-label{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:12px 10px 6px}
+.ni{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);transition:all .15s;user-select:none}
+.ni:hover{background:var(--bg3);color:var(--text)}
+.ni.active{background:var(--green3);color:var(--green2);border:1px solid rgba(46,160,67,.2)}
+.ni svg{width:15px;height:15px;flex-shrink:0}
+.ni .bc{margin-left:auto;background:var(--green);color:#fff;border-radius:20px;font-size:10px;font-weight:600;padding:1px 7px}
+.ni .ba{margin-left:auto;background:var(--amber);color:#000;border-radius:20px;font-size:10px;font-weight:600;padding:1px 7px}
+.sb-footer{padding:14px 18px 18px;border-top:1px solid rgba(125,133,144,.08)}
+.uf{display:flex;align-items:center;gap:10px}
+.uav{width:32px;height:32px;border-radius:50%;background:var(--green3);border:1px solid var(--gbd);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--green2);flex-shrink:0}
+.uname{font-size:13px;font-weight:500;color:var(--text)}
+.urole{font-size:11px;color:var(--text2)}
+.lout{margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;transition:color .2s}
+.lout:hover{color:var(--red)}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{padding:14px 28px;border-bottom:1px solid rgba(125,133,144,.1);display:flex;align-items:center;gap:12px;flex-shrink:0;background:var(--bg)}
+.topbar-title{font-size:16px;font-weight:600;color:var(--text);flex:1}
+.topbar-badge{background:rgba(46,160,67,.12);color:var(--green2);border:1px solid rgba(46,160,67,.25);border-radius:20px;font-size:10px;font-weight:600;padding:3px 10px}
+.content{flex:1;overflow-y:auto}
+.page{display:none;padding:24px 28px;min-height:100%}
+.page.active{display:block}
+
+.ph{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px}
+.ph-title{font-size:20px;font-weight:600;color:var(--text)}
+.ph-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.ph-right{display:flex;gap:8px}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;border:1px solid transparent}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:var(--green2)}
+.btn-ghost{background:var(--bg3);color:var(--text2);border-color:rgba(125,133,144,.2)}
+.btn-ghost:hover{border-color:rgba(125,133,144,.4);color:var(--text)}
+.btn svg{width:13px;height:13px}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.sc{background:var(--bg2);border:1px solid rgba(125,133,144,.1);border-radius:10px;padding:18px 20px}
+.sc-label{font-size:11px;font-weight:500;color:var(--text2);margin-bottom:8px}
+.sc-value{font-size:28px;font-weight:700;color:var(--text);line-height:1;margin-bottom:3px}
+.sc-change{font-size:11px;color:var(--text3)}
+.up{color:var(--green2)}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.card{background:var(--bg2);border:1px solid rgba(125,133,144,.1);border-radius:10px;overflow:hidden}
+.card-h{padding:14px 18px;border-bottom:1px solid rgba(125,133,144,.08);display:flex;align-items:center;justify-content:space-between}
+.card-h-title{font-size:13px;font-weight:600;color:var(--text)}
+.card-h-action{font-size:12px;color:var(--green2);cursor:pointer}
+.card-h-action:hover{text-decoration:underline}
+
+/* TABLE */
+.tcard{background:var(--bg2);border:1px solid rgba(125,133,144,.1);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.ttb{padding:12px 16px;border-bottom:1px solid rgba(125,133,144,.08);display:flex;gap:10px;align-items:center}
+.si{flex:1;padding:8px 12px;background:var(--bg3);border:1px solid rgba(125,133,144,.15);border-radius:6px;color:var(--text);font-size:13px;font-family:'Inter',sans-serif;outline:none}
+.si:focus{border-color:var(--green2)}
+.si::placeholder{color:var(--text3)}
+.fsel{padding:8px 10px;background:var(--bg3);border:1px solid rgba(125,133,144,.15);border-radius:6px;color:var(--text);font-size:12px;font-family:'Inter',sans-serif;outline:none}
+.fsel option{background:var(--bg3)}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 16px;text-align:left;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);border-bottom:1px solid rgba(125,133,144,.08)}
+td{padding:12px 16px;font-size:13px;color:var(--text);border-bottom:1px solid rgba(125,133,144,.05)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(125,133,144,.03);cursor:pointer}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap}
+.b-green{background:rgba(63,185,80,.1);color:var(--green2);border:1px solid rgba(63,185,80,.2)}
+.b-blue{background:rgba(56,139,253,.1);color:var(--blue);border:1px solid rgba(56,139,253,.2)}
+.b-amber{background:rgba(210,153,34,.1);color:var(--amber);border:1px solid rgba(210,153,34,.2)}
+.b-red{background:rgba(248,81,73,.1);color:var(--red);border:1px solid rgba(248,81,73,.2)}
+.b-gray{background:rgba(125,133,144,.1);color:var(--text2);border:1px solid rgba(125,133,144,.2)}
+
+/* OBRA CARD */
+.obra-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.obra-card{background:var(--bg2);border:1px solid rgba(125,133,144,.1);border-radius:10px;padding:18px 20px;cursor:pointer;transition:border-color .15s}
+.obra-card:hover{border-color:rgba(46,160,67,.4)}
+.obra-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
+.obra-name{font-size:14px;font-weight:600;color:var(--text)}
+.obra-client{font-size:12px;color:var(--green2);margin-bottom:10px}
+.obra-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.obra-footer{display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid rgba(125,133,144,.08)}
+.obra-m2{font-size:12px;color:var(--text2)}
+.obra-val{font-size:14px;font-weight:700;color:var(--text)}
+
+/* PROGRESS BAR */
+.pbar{height:4px;background:var(--bg3);border-radius:2px;margin:10px 0 12px}
+.pbar-fill{height:4px;border-radius:2px;background:var(--green);transition:width .5s}
+
+/* PPTO CARD */
+.ppto-card{background:var(--bg2);border:1px solid rgba(125,133,144,.1);border-radius:8px;padding:16px 18px;margin-bottom:10px;cursor:pointer;transition:border-color .15s;display:flex;align-items:center;gap:16px}
+.ppto-card:hover{border-color:rgba(46,160,67,.4)}
+.ppto-icon{width:40px;height:40px;border-radius:8px;background:var(--green3);border:1px solid var(--gbd);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ppto-main{flex:1}
+.ppto-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px}
+.ppto-client{font-size:11px;color:var(--text2);margin-bottom:6px}
+.ppto-footer{display:flex;align-items:center;gap:8px}
+.ppto-val{font-size:14px;font-weight:700;color:var(--text);margin-left:auto}
+
+/* LIST ROW */
+.lr{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid rgba(125,133,144,.05);cursor:pointer;transition:background .1s}
+.lr:last-child{border-bottom:none}
+.lr:hover{background:rgba(125,133,144,.03)}
+.lr-av{width:34px;height:34px;border-radius:50%;background:var(--green3);border:1px solid var(--gbd);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--green2);flex-shrink:0}
+.lr-main{flex:1;min-width:0}
+.lr-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lr-sub{font-size:11px;color:var(--text2);margin-top:1px}
+
+/* MODAL */
+.mover{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:500;align-items:center;justify-content:center;padding:20px}
+.mover.open{display:flex}
+.modal{background:var(--bg2);border:1px solid rgba(125,133,144,.15);border-radius:12px;padding:28px;width:580px;max-width:100%;max-height:90vh;overflow-y:auto;position:relative}
+.mc{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--text2);cursor:pointer;font-size:18px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:5px;transition:all .15s}
+.mc:hover{background:var(--bg3);color:var(--text)}
+.mt{font-size:17px;font-weight:600;color:var(--text);margin-bottom:20px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fgroup{display:flex;flex-direction:column;gap:5px}
+.fgroup.full{grid-column:1/-1}
+.flabel{font-size:11px;font-weight:500;color:var(--text2)}
+.finput,.fselect,.ftextarea{padding:9px 11px;background:var(--bg3);border:1px solid rgba(125,133,144,.15);border-radius:6px;color:var(--text);font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s}
+.finput:focus,.fselect:focus,.ftextarea:focus{border-color:var(--green2)}
+.fselect option{background:var(--bg3)}
+.ftextarea{resize:vertical;min-height:70px}
+.fa{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:18px;border-top:1px solid rgba(125,133,144,.08)}
+
+.ib{width:26px;height:26px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;border:1px solid transparent;background:none;color:var(--text2)}
+.ib:hover{background:var(--bg3);border-color:rgba(125,133,144,.2);color:var(--text)}
+.ib svg{width:13px;height:13px}
+
+#toast{position:fixed;bottom:20px;right:20px;background:var(--bg3);border:1px solid rgba(125,133,144,.2);border-radius:8px;padding:11px 18px;font-size:13px;color:var(--text);z-index:9999;opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+#toast.show{opacity:1;transform:translateY(0)}
+
+@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}.g2,.g3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="lbox">
+    <div class="llogo">
+      <div class="llogo-icon">CO</div>
+      <div>
+        <div class="llogo-text">Cotaisa CRM</div>
+        <div class="llogo-sub">Pladur · Acústica · Mijas</div>
+      </div>
+    </div>
+    <div class="lh">Panel de gestión</div>
+    <div class="lsub">Obras, presupuestos y clientes</div>
+    <label class="llabel">Usuario</label>
+    <input class="linput" id="lu" value="julio" placeholder="Usuario" onkeydown="if(event.key==='Enter')doLogin()">
+    <label class="llabel">Contraseña</label>
+    <input class="linput" type="password" id="lp" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="lbtn" onclick="doLogin()">Entrar</button>
+    <div class="lerr" id="lerr">Usuario o contraseña incorrectos</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <aside class="sb">
+    <div class="sb-brand">
+      <div class="sb-brand-top"><div class="sb-brand-dot"></div><div class="sb-brand-name">COTAISA</div></div>
+      <div class="sb-brand-sub">Especialistas contra el ruido</div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-label">Principal</div>
+      <div class="ni active" onclick="nav('dashboard',this)">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+        Dashboard
+      </div>
+      <div class="sb-label">Gestión</div>
+      <div class="ni" onclick="nav('obras',this)">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z"/></svg>
+        Obras
+        <span class="bc">6</span>
+      </div>
+      <div class="ni" onclick="nav('presupuestos',this)">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+        Presupuestos
+        <span class="ba">4</span>
+      </div>
+      <div class="ni" onclick="nav('clientes',this)">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21"/></svg>
+        Clientes
+      </div>
+      <div class="ni" onclick="nav('equipo',this)">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
+        Equipo
+      </div>
+    </nav>
+    <div class="sb-footer">
+      <div class="uf">
+        <div class="uav">JF</div>
+        <div><div class="uname">Julio Fernández</div><div class="urole">Gerente</div></div>
+        <button class="lout" onclick="logout()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/></svg></button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="tb-title">Dashboard</div>
+      <span class="topbar-badge">DEMO — Airmate</span>
+    </div>
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="stats">
+          <div class="sc"><div class="sc-label">Obras en curso</div><div class="sc-value">6</div><div class="sc-change up">↑ 2 nuevas este mes</div></div>
+          <div class="sc"><div class="sc-label">Facturación activa</div><div class="sc-value" style="font-size:20px">€ 1.84M</div><div class="sc-change up">↑ 18% vs 2025</div></div>
+          <div class="sc"><div class="sc-label">Presupuestos pendientes</div><div class="sc-value" style="color:var(--amber)">4</div><div class="sc-change" style="color:var(--amber)">Por responder</div></div>
+          <div class="sc"><div class="sc-label">Trabajadores activos</div><div class="sc-value">18</div><div class="sc-change">En 6 obras simultáneas</div></div>
+        </div>
+        <div class="g2">
+          <div class="card">
+            <div class="card-h"><span class="card-h-title">Obras activas</span><span class="card-h-action" onclick="nav('obras',document.querySelectorAll('.ni')[1])">Ver todas →</span></div>
+            <div id="dash-obras"></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><span class="card-h-title">Presupuestos en espera</span><span class="card-h-action" onclick="nav('presupuestos',document.querySelectorAll('.ni')[2])">Ver todos →</span></div>
+            <div id="dash-pptos"></div>
+          </div>
+        </div>
+        <div class="g2">
+          <div class="card">
+            <div class="card-h"><span class="card-h-title">Distribución de obras</span></div>
+            <div style="padding:16px 18px" id="dist-bars"></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><span class="card-h-title">Clientes principales</span></div>
+            <div id="dash-clients"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OBRAS -->
+      <div class="page" id="page-obras">
+        <div class="ph">
+          <div><div class="ph-title">Obras</div><div class="ph-sub">Proyectos en ejecución y finalizados</div></div>
+          <div class="ph-right">
+            <select class="fsel" id="sf-o" onchange="renderObras()"><option value="">Todos los estados</option><option value="en curso">En curso</option><option value="finalizada">Finalizada</option><option value="presupuesto">Presupuesto</option></select>
+            <button class="btn btn-green" onclick="openM('obra')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>Nueva Obra</button>
+          </div>
+        </div>
+        <div class="obra-cards" id="obra-cards"></div>
+      </div>
+
+      <!-- PRESUPUESTOS -->
+      <div class="page" id="page-presupuestos">
+        <div class="ph">
+          <div><div class="ph-title">Presupuestos</div><div class="ph-sub">Propuestas enviadas pendientes de respuesta</div></div>
+          <div class="ph-right"><button class="btn btn-green" onclick="openM('ppto')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>Nuevo Presupuesto</button></div>
+        </div>
+        <div id="ppto-list"></div>
+      </div>
+
+      <!-- CLIENTES -->
+      <div class="page" id="page-clientes">
+        <div class="ph">
+          <div><div class="ph-title">Clientes</div><div class="ph-sub">Constructoras, promotoras y particulares</div></div>
+          <div class="ph-right"><button class="btn btn-green" onclick="openM('cliente')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>Nuevo Cliente</button></div>
+        </div>
+        <div class="tcard">
+          <div class="ttb"><input class="si" placeholder="Buscar cliente..." id="sq-c" oninput="renderClientes()"></div>
+          <table><thead><tr><th>Empresa / Contacto</th><th>Tipo</th><th>Obras</th><th>Teléfono</th><th>Estado</th></tr></thead>
+          <tbody id="tb-c"></tbody></table>
+        </div>
+      </div>
+
+      <!-- EQUIPO -->
+      <div class="page" id="page-equipo">
+        <div class="ph">
+          <div><div class="ph-title">Equipo</div><div class="ph-sub">Trabajadores y cuadrillas</div></div>
+          <div class="ph-right"><button class="btn btn-green" onclick="openM('trabajador')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>Añadir Trabajador</button></div>
+        </div>
+        <div class="tcard">
+          <table><thead><tr><th>Trabajador</th><th>Especialidad</th><th>Obra asignada</th><th>Estado</th></tr></thead>
+          <tbody id="tb-eq"></tbody></table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODAL OBRA -->
+<div class="mover" id="m-obra">
+  <div class="modal">
+    <button class="mc" onclick="closeM('obra')">×</button>
+    <div class="mt" id="mt-obra">Nueva Obra</div>
+    <div class="fg">
+      <div class="fgroup full"><label class="flabel">Nombre / Descripción *</label><input class="finput" id="ob-nombre" placeholder="Villa de lujo en Marbella — Techos decorativos"></div>
+      <div class="fgroup full"><label class="flabel">Cliente / Empresa</label><input class="finput" id="ob-cliente" placeholder="IC Construcciones, TM Grupo..."></div>
+      <div class="fgroup"><label class="flabel">Ubicación</label><input class="finput" id="ob-ubicacion" placeholder="Marbella, Estepona..."></div>
+      <div class="fgroup"><label class="flabel">M²</label><input class="finput" id="ob-m2" type="number" placeholder="500"></div>
+      <div class="fgroup"><label class="flabel">Valor (€)</label><input class="finput" id="ob-valor" type="number" placeholder="85000"></div>
+      <div class="fgroup"><label class="flabel">Estado</label>
+        <select class="fselect" id="ob-estado"><option value="en curso">En curso</option><option value="finalizada">Finalizada</option><option value="presupuesto">Presupuesto</option></select>
+      </div>
+      <div class="fgroup"><label class="flabel">% Avance</label><input class="finput" id="ob-avance" type="number" placeholder="60" min="0" max="100"></div>
+      <div class="fgroup"><label class="flabel">Trabajadores asignados</label><input class="finput" id="ob-workers" type="number" placeholder="4"></div>
+      <div class="fgroup full"><label class="flabel">Trabajos incluidos</label><input class="finput" id="ob-tags" placeholder="Tabiquería, techos pladur, trasdosados..."></div>
+      <div class="fgroup full"><label class="flabel">Notas</label><textarea class="ftextarea" id="ob-notas" placeholder="Observaciones, particularidades..."></textarea></div>
+    </div>
+    <div class="fa">
+      <button class="btn btn-ghost" onclick="closeM('obra')">Cancelar</button>
+      <button class="btn btn-green" onclick="saveObra()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PRESUPUESTO -->
+<div class="mover" id="m-ppto">
+  <div class="modal">
+    <button class="mc" onclick="closeM('ppto')">×</button>
+    <div class="mt">Nuevo Presupuesto</div>
+    <div class="fg">
+      <div class="fgroup full"><label class="flabel">Descripción *</label><input class="finput" id="pp-nombre" placeholder="Tabiquería y techos — Nave industrial Fuengirola"></div>
+      <div class="fgroup full"><label class="flabel">Cliente</label><input class="finput" id="pp-cliente" placeholder="Empresa o promotora"></div>
+      <div class="fgroup"><label class="flabel">Importe (€)</label><input class="finput" id="pp-importe" type="number" placeholder="45000"></div>
+      <div class="fgroup"><label class="flabel">Fecha envío</label><input class="finput" id="pp-fecha" type="date"></div>
+      <div class="fgroup full"><label class="flabel">Trabajos incluidos</label><textarea class="ftextarea" id="pp-trabajos" placeholder="Detalla los trabajos y m²..."></textarea></div>
+    </div>
+    <div class="fa">
+      <button class="btn btn-ghost" onclick="closeM('ppto')">Cancelar</button>
+      <button class="btn btn-green" onclick="savePpto()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CLIENTE -->
+<div class="mover" id="m-cliente">
+  <div class="modal">
+    <button class="mc" onclick="closeM('cliente')">×</button>
+    <div class="mt">Nuevo Cliente</div>
+    <div class="fg">
+      <div class="fgroup full"><label class="flabel">Empresa *</label><input class="finput" id="cl-empresa" placeholder="IC Construcciones SL"></div>
+      <div class="fgroup"><label class="flabel">Contacto</label><input class="finput" id="cl-contacto" placeholder="Nombre del contacto"></div>
+      <div class="fgroup"><label class="flabel">Teléfono</label><input class="finput" id="cl-tel" placeholder="+34 600 000 000"></div>
+      <div class="fgroup"><label class="flabel">Tipo</label>
+        <select class="fselect" id="cl-tipo"><option>Constructora</option><option>Promotora</option><option>Particular</option><option>Hostelería</option><option>Arquitecto</option><option>Hospital / Clínica</option></select>
+      </div>
+      <div class="fgroup full"><label class="flabel">Notas</label><textarea class="ftextarea" id="cl-notas" placeholder="Historial, condiciones, comentarios..."></textarea></div>
+    </div>
+    <div class="fa">
+      <button class="btn btn-ghost" onclick="closeM('cliente')">Cancelar</button>
+      <button class="btn btn-green" onclick="saveCliente()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL TRABAJADOR -->
+<div class="mover" id="m-trabajador">
+  <div class="modal">
+    <button class="mc" onclick="closeM('trabajador')">×</button>
+    <div class="mt">Añadir Trabajador</div>
+    <div class="fg">
+      <div class="fgroup full"><label class="flabel">Nombre *</label><input class="finput" id="tr-nombre" placeholder="Nombre completo"></div>
+      <div class="fgroup"><label class="flabel">Especialidad</label>
+        <select class="fselect" id="tr-esp"><option>Montador pladur</option><option>Pastero</option><option>Fontanería</option><option>Electricidad</option><option>Carpintería</option><option>Pintura</option><option>Oficial 1ª</option></select>
+      </div>
+      <div class="fgroup"><label class="flabel">Teléfono</label><input class="finput" id="tr-tel" placeholder="+34 600 000 000"></div>
+      <div class="fgroup"><label class="flabel">Obra asignada</label><input class="finput" id="tr-obra" placeholder="Nombre de la obra"></div>
+    </div>
+    <div class="fa">
+      <button class="btn btn-ghost" onclick="closeM('trabajador')">Cancelar</button>
+      <button class="btn btn-green" onclick="saveTrabajador()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ─── DATA ───
+let OBRAS = [
+  {id:1,nombre:'120 Viviendas Marine Hills — Bloque 3',cliente:'TM Grupo Inmobiliario',ubicacion:'Estepona, Málaga',m2:4200,valor:380000,estado:'en curso',avance:60,workers:6,tags:'Tabiquería, trasdosados, techos yeso laminado',notas:'Bloque 3 de 18 apartamentos. Nos adjudicaron también 2 pisos piloto de otro bloque por calidad.'},
+  {id:2,nombre:'5 Chalets Adosados',cliente:'Promotora Costa Privada',ubicacion:'Fuengirola, Málaga',m2:1800,valor:165000,estado:'en curso',avance:45,workers:4,tags:'Tabiquería, trasdosados playa, techos yeso laminado DIAMANT',notas:'5 adosados. Yeso DIAMANT por proximidad al mar.'},
+  {id:3,nombre:'Villa de Lujo — Nordi Group',cliente:'Nordi Group',ubicacion:'Marbella',m2:620,valor:95000,estado:'en curso',avance:80,workers:3,tags:'Techos decorativos yeso laminado',notas:'Villa exclusiva. Acabados de máxima calidad.'},
+  {id:4,nombre:'2 Villas — Rugue',cliente:'Rugue',ubicacion:'Istán, Málaga',m2:980,valor:112000,estado:'en curso',avance:55,workers:3,tags:'Tabiquería, trasdosados, techos yeso laminado',notas:'Dos villas espectaculares en Istán.'},
+  {id:5,nombre:'Clínica de Podología — Llave en Mano',cliente:'Particular',ubicacion:'Mijas Pueblo',m2:180,valor:48000,estado:'en curso',avance:70,workers:2,tags:'Pladur, albañilería, fontanería, electricidad, carpintería, pintura',notas:'Llave en mano completo para clínica de podología.'},
+  {id:6,nombre:'Ampliación Hospital Quirón',cliente:'IC Construcciones',ubicacion:'Marbella',m2:10000,valor:980000,estado:'finalizada',avance:100,workers:0,tags:'Tabiquería, trasdosados, techos pladur, lamas Gabelex, hornacinas',notas:'FINALIZADA. 10.000 m² pladur. +200 m² lamas metálicas Gabelex. Hornacinas yeso laminado.'},
+  {id:7,nombre:'Restaurante Popeyes — Alameda',cliente:'Reactiva',ubicacion:'Málaga Centro',m2:320,valor:62000,estado:'finalizada',avance:100,workers:0,tags:'Trasdosados, tabiquería, techos pladur, pantallas acústicas, techos desmontables, falsas vigas RF',notas:'FINALIZADA. Techos acústicos 65dB a gran altura. Cajeado máquina AC.'},
+];
+
+let PPTOS = [
+  {id:1,nombre:'Nave Industrial — Tabiquería y Techos',cliente:'Logística Sur SL',importe:78000,fecha:'2026-06-20',trabajos:'3.200 m² tabiquería pladur + techos desmontables. Plazo 12 semanas.'},
+  {id:2,nombre:'Hotel Boutique — Acústica habitaciones',cliente:'Grupo Hoteles Málaga',importe:145000,fecha:'2026-06-25',trabajos:'42 habitaciones. Trasdosados acústicos, techos con aislamiento 65dB, puertas RF.'},
+  {id:3,nombre:'Oficinas — Reforma Integral',cliente:'Empresa Tech Marbella',importe:55000,fecha:'2026-06-28',trabajos:'800 m² oficinas. Tabiquería, techos desmontables, pantallas acústicas zonas reuniones.'},
+  {id:4,nombre:'Villa Privada — Techos decorativos',cliente:'Particular — Benahavís',importe:38000,fecha:'2026-07-01',trabajos:'450 m² techos decorativos yeso laminado. Zonas salon, dormitorios y baños.'},
+];
+
+let CLIENTES = [
+  {id:1,empresa:'TM Grupo Inmobiliario',contacto:'Rafael Torres',tel:'+34 952 234 567',tipo:'Promotora',obras:2,notas:'Cliente premium. Marine Hills Estepona y otro proyecto pendiente.'},
+  {id:2,empresa:'IC Construcciones',contacto:'Ignacio Campos',tel:'+34 952 345 678',tipo:'Constructora',obras:3,notas:'Nos dieron el Hospital Quirón. Muy buen relationship.'},
+  {id:3,empresa:'Reactiva',contacto:'Pedro Ruiz',tel:'+34 951 456 789',tipo:'Constructora',obras:2,notas:'Popeyes Alameda. Varios proyectos en hostelería.'},
+  {id:4,empresa:'Nordi Group',contacto:'Nordic Team',tel:'+34 952 567 890',tipo:'Promotora',obras:1,notas:'Villa de lujo Marbella. Posibles más villas en la zona Golden Mile.'},
+  {id:5,empresa:'Rugue',contacto:'Manuel Ruiz',tel:'+34 951 678 901',tipo:'Constructora',obras:1,notas:'Villas en Istán. Trabajo cuidado, exigen calidad.'},
+  {id:6,empresa:'Grupo Hoteles Málaga',contacto:'Carmen López',tel:'+34 952 789 012',tipo:'Hostelería',obras:0,notas:'Presupuesto hotel boutique enviado. Pendiente respuesta.'},
+];
+
+let EQUIPO = [
+  {id:1,nombre:'Paco Jiménez',esp:'Oficial 1ª',tel:'+34 655 111 222',obra:'Marine Hills — Estepona'},
+  {id:2,nombre:'Antonio García',esp:'Montador pladur',tel:'+34 655 222 333',obra:'Marine Hills — Estepona'},
+  {id:3,nombre:'Roberto Sánchez',esp:'Pastero',tel:'+34 655 333 444',obra:'Marine Hills — Estepona'},
+  {id:4,nombre:'Miguel Torres',esp:'Montador pladur',tel:'+34 655 444 555',obra:'Chalets Fuengirola'},
+  {id:5,nombre:'José Martín',esp:'Pastero',tel:'+34 655 555 666',obra:'Chalets Fuengirola'},
+  {id:6,nombre:'Carlos López',esp:'Montador pladur',tel:'+34 655 666 777',obra:'Villa Nordi — Marbella'},
+  {id:7,nombre:'Diego Ruiz',esp:'Oficial 1ª',tel:'+34 655 777 888',obra:'2 Villas Istán'},
+  {id:8,nombre:'Andrés Vega',esp:'Fontanería',tel:'+34 655 888 999',obra:'Clínica Podología — Mijas'},
+  {id:9,nombre:'Fernando Mora',esp:'Electricidad',tel:'+34 655 999 000',obra:'Clínica Podología — Mijas'},
+];
+
+const PASS={julio:'Cotaisa2024'};
+
+function doLogin(){
+  const u=document.getElementById('lu').value.toLowerCase().trim();
+  const p=document.getElementById('lp').value;
+  if(PASS[u]&&PASS[u]===p){
+    document.getElementById('login').style.display='none';
+    document.getElementById('app').style.display='flex';
+    renderAll();
+  } else {
+    document.getElementById('lerr').style.display='block';
+    document.getElementById('lp').value='';
+  }
+}
+window.onload=()=>{document.getElementById('lp').value='Cotaisa2024';setTimeout(doLogin,400);}
+function logout(){document.getElementById('app').style.display='none';document.getElementById('login').style.display='flex';document.getElementById('lp').value='';}
+
+const TITLES={dashboard:'Dashboard',obras:'Obras',presupuestos:'Presupuestos',clientes:'Clientes',equipo:'Equipo'};
+function nav(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  el.classList.add('active');
+  document.getElementById('tb-title').textContent=TITLES[id]||id;
+}
+
+function renderAll(){renderDash();renderObras();renderPptos();renderClientes();renderEquipo();}
+
+function renderDash(){
+  const activas=OBRAS.filter(o=>o.estado==='en curso');
+  document.getElementById('dash-obras').innerHTML=activas.slice(0,4).map(o=>`
+    <div class="lr">
+      <div class="lr-av" style="font-size:14px">🏗️</div>
+      <div class="lr-main">
+        <div class="lr-name">${esc(o.nombre)}</div>
+        <div class="lr-sub">${esc(o.cliente)} · ${o.m2?o.m2.toLocaleString()+' m²':''}</div>
+        <div style="height:3px;background:var(--bg3);border-radius:2px;margin-top:6px"><div style="height:3px;width:${o.avance}%;background:var(--green);border-radius:2px"></div></div>
+      </div>
+      <span style="font-size:12px;font-weight:600;color:var(--green2)">${o.avance}%</span>
+    </div>`).join('');
+
+  document.getElementById('dash-pptos').innerHTML=PPTOS.map(p=>`
+    <div class="lr">
+      <div class="lr-av" style="background:rgba(210,153,34,.1);border-color:rgba(210,153,34,.3);color:var(--amber);font-size:14px">📄</div>
+      <div class="lr-main">
+        <div class="lr-name">${esc(p.cliente)}</div>
+        <div class="lr-sub">${esc(p.nombre.substring(0,40))}${p.nombre.length>40?'...':''}</div>
+      </div>
+      <span style="font-size:13px;font-weight:700;color:var(--text)">€${p.importe.toLocaleString()}</span>
+    </div>`).join('');
+
+  const tipos=['en curso','finalizada','presupuesto'];
+  const labels={'en curso':'En curso','finalizada':'Finalizadas','presupuesto':'Presupuesto'};
+  const max=Math.max(...tipos.map(t=>OBRAS.filter(o=>o.estado===t).length))||1;
+  document.getElementById('dist-bars').innerHTML=tipos.map(t=>{
+    const count=OBRAS.filter(o=>o.estado===t).length;
+    return `<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:12px;color:var(--text2)">${labels[t]}</span>
+        <span style="font-size:12px;font-weight:600;color:var(--text)">${count}</span>
+      </div>
+      <div style="height:6px;background:var(--bg3);border-radius:3px">
+        <div style="height:6px;width:${Math.round(count/max*100)}%;background:var(--green);border-radius:3px"></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('dash-clients').innerHTML=CLIENTES.map(c=>`
+    <div class="lr">
+      <div class="lr-av">${initials(c.empresa)}</div>
+      <div class="lr-main">
+        <div class="lr-name">${esc(c.empresa)}</div>
+        <div class="lr-sub">${c.tipo} · ${c.obras} obra${c.obras!==1?'s':''}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderObras(){
+  const est=(document.getElementById('sf-o').value||'');
+  let rows=OBRAS.filter(o=>!est||o.estado===est);
+  document.getElementById('obra-cards').innerHTML=rows.map(o=>`
+    <div class="obra-card">
+      <div class="obra-card-top">
+        <div>
+          <div class="obra-name">${esc(o.nombre)}</div>
+          <div class="obra-client">${esc(o.cliente)} · ${esc(o.ubicacion)}</div>
+        </div>
+        ${bObra(o.estado)}
+      </div>
+      <div class="obra-tags">${(o.tags||'').split(',').map(t=>`<span class="badge b-gray">${esc(t.trim())}</span>`).join('')}</div>
+      ${o.estado==='en curso'?`<div class="pbar"><div class="pbar-fill" style="width:${o.avance}%"></div></div>`:''}
+      ${o.notas?`<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px">${esc(o.notas)}</div>`:''}
+      <div class="obra-footer">
+        <div class="obra-m2">${o.m2?o.m2.toLocaleString()+' m²':''}${o.workers?' · '+o.workers+' trabajadores':''}</div>
+        <div class="obra-val">€ ${(o.valor||0).toLocaleString()}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderPptos(){
+  document.getElementById('ppto-list').innerHTML=PPTOS.map(p=>`
+    <div class="ppto-card">
+      <div class="ppto-icon">📄</div>
+      <div class="ppto-main">
+        <div class="ppto-name">${esc(p.nombre)}</div>
+        <div class="ppto-client">${esc(p.cliente)} · enviado ${fmtD(p.fecha)}</div>
+        <div class="ppto-footer"><span class="badge b-amber">Pendiente respuesta</span></div>
+      </div>
+      <div class="ppto-val">€ ${(p.importe||0).toLocaleString()}</div>
+    </div>`).join('');
+}
+
+function renderClientes(){
+  const q=(document.getElementById('sq-c').value||'').toLowerCase();
+  let rows=CLIENTES.filter(c=>!q||c.empresa.toLowerCase().includes(q)||c.contacto.toLowerCase().includes(q));
+  document.getElementById('tb-c').innerHTML=rows.map(c=>`<tr>
+    <td><div style="font-weight:500">${esc(c.empresa)}</div><div style="font-size:11px;color:var(--text2)">${esc(c.contacto)}</div></td>
+    <td><span class="badge b-gray">${esc(c.tipo)}</span></td>
+    <td style="font-weight:500">${c.obras}</td>
+    <td style="color:var(--text2)">${esc(c.tel)}</td>
+    <td><span class="badge b-green">Activo</span></td>
+  </tr>`).join('');
+}
+
+function renderEquipo(){
+  document.getElementById('tb-eq').innerHTML=EQUIPO.map(t=>`<tr>
+    <td><div style="font-weight:500">${esc(t.nombre)}</div><div style="font-size:11px;color:var(--text2)">${esc(t.tel)}</div></td>
+    <td><span class="badge b-blue">${esc(t.esp)}</span></td>
+    <td style="color:var(--text2);font-size:12px">${esc(t.obra)}</td>
+    <td><span class="badge b-green">Activo</span></td>
+  </tr>`).join('');
+}
+
+function saveObra(){
+  const nombre=gv('ob-nombre');if(!nombre){toast('Nombre obligatorio');return;}
+  OBRAS.unshift({id:Date.now(),nombre,cliente:gv('ob-cliente'),ubicacion:gv('ob-ubicacion'),m2:Number(gv('ob-m2'))||0,valor:Number(gv('ob-valor'))||0,estado:gv('ob-estado'),avance:Number(gv('ob-avance'))||0,workers:Number(gv('ob-workers'))||0,tags:gv('ob-tags'),notas:gv('ob-notas')});
+  closeM('obra');renderAll();toast('Obra añadida');
+}
+function savePpto(){
+  const nombre=gv('pp-nombre');if(!nombre){toast('Descripción obligatoria');return;}
+  PPTOS.unshift({id:Date.now(),nombre,cliente:gv('pp-cliente'),importe:Number(gv('pp-importe'))||0,fecha:gv('pp-fecha'),trabajos:gv('pp-trabajos')});
+  closeM('ppto');renderAll();toast('Presupuesto guardado');
+}
+function saveCliente(){
+  const empresa=gv('cl-empresa');if(!empresa){toast('Empresa obligatoria');return;}
+  CLIENTES.unshift({id:Date.now(),empresa,contacto:gv('cl-contacto'),tel:gv('cl-tel'),tipo:gv('cl-tipo'),obras:0,notas:gv('cl-notas')});
+  closeM('cliente');renderAll();toast('Cliente añadido');
+}
+function saveTrabajador(){
+  const nombre=gv('tr-nombre');if(!nombre){toast('Nombre obligatorio');return;}
+  EQUIPO.unshift({id:Date.now(),nombre,esp:gv('tr-esp'),tel:gv('tr-tel'),obra:gv('tr-obra')});
+  closeM('trabajador');renderAll();toast('Trabajador añadido');
+}
+
+function openM(type){
+  document.querySelectorAll('#m-'+type+' .finput,#m-'+type+' .ftextarea').forEach(el=>el.value='');
+  document.querySelectorAll('#m-'+type+' .fselect').forEach(el=>el.selectedIndex=0);
+  if(type==='ppto')document.getElementById('pp-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('m-'+type).classList.add('open');
+}
+function closeM(type){document.getElementById('m-'+type).classList.remove('open');}
+document.querySelectorAll('.mover').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
+
+function gv(id){return(document.getElementById(id)?.value||'').trim();}
+function esc(x){return String(x||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmtD(d){if(!d)return'—';const[y,m,day]=String(d).split('-');return`${parseInt(day)} ${'ene feb mar abr may jun jul ago sep oct nov dic'.split(' ')[parseInt(m)-1]}`;}
+function initials(n){return String(n||'').trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase();}
+function bObra(e){const m={'en curso':'b-green',finalizada:'b-blue',presupuesto:'b-amber'};const l={'en curso':'En curso',finalizada:'Finalizada',presupuesto:'Presupuesto'};return`<span class="badge ${m[e]||'b-gray'}">${l[e]||e}</span>`;}
+let _tt;
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),2400);}
+</script>
+</body>
+</html>
