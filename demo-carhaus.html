@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carhaus CRM — Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:    #0d1117;
+  --bg2:   #161b22;
+  --bg3:   #1c2330;
+  --bg4:   #21293a;
+  --blue:  #003087;
+  --blue2: #0050b3;
+  --blue3: rgba(0,48,135,.15);
+  --bd:    rgba(0,48,135,.3);
+  --text:  #e6edf3;
+  --text2: #7d8590;
+  --text3: #3d444d;
+  --green: #3fb950;
+  --red:   #f85149;
+  --amber: #d29922;
+  --r:     8px;
+  --sw:    240px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow:hidden;font-size:14px}
+a{color:inherit;text-decoration:none}
+
+/* LOGIN */
+#login{position:fixed;inset:0;z-index:999;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.lbox{width:380px;padding:48px 40px;background:var(--bg2);border:1px solid var(--bd);border-radius:12px}
+.llogo{display:flex;align-items:center;gap:12px;margin-bottom:32px}
+.llogo-icon{width:40px;height:40px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#fff;letter-spacing:-1px}
+.llogo-text{font-weight:600;font-size:18px;color:var(--text)}
+.llogo-sub{font-size:11px;color:var(--text2);margin-top:1px}
+.lh{font-size:20px;font-weight:600;color:var(--text);margin-bottom:6px}
+.lsub{font-size:13px;color:var(--text2);margin-bottom:28px}
+.llabel{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px}
+.linput{width:100%;padding:10px 12px;margin-bottom:14px;background:var(--bg3);border:1px solid var(--bd);border-radius:var(--r);color:var(--text);font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s}
+.linput:focus{border-color:var(--blue2)}
+.lbtn{width:100%;padding:11px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s;margin-top:4px}
+.lbtn:hover{background:var(--blue2)}
+.lerr{text-align:center;color:var(--red);font-size:12px;margin-top:12px;display:none}
+
+/* APP */
+#app{display:none;height:100vh;flex-direction:row}
+
+/* SIDEBAR */
+.sb{width:var(--sw);flex-shrink:0;background:var(--bg2);border-right:1px solid rgba(125,133,144,.1);display:flex;flex-direction:column}
+.sb-brand{padding:20px 18px 16px;border-bottom:1px solid rgba(125,133,144,.08)}
+.sb-brand-name{font-weight:700;font-size:15px;color:var(--text);letter-spacing:-.3px}
+.sb-brand-sub{font-size:11px;color:var(--text2);margin-top:2px}
+.sb-nav{flex:1;padding:12px 8px;display:flex;flex-direction:column;gap:1px;overflow-y:auto}
+.sb-label{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:12px 10px 6px}
+.ni{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);transition:all .15s;user-select:none}
+.ni:hover{background:var(--bg3);color:var(--text)}
+.ni.active{background:var(--blue3);color:#6ea8fe;border:1px solid rgba(0,48,135,.25)}
+.ni svg{width:15px;height:15px;flex-shrink:0}
+.ni .badge-count{margin-left:auto;background:var(--blue);color:#fff;border-radius:20px;font-size:10px;font-weight:600;padding:1px 7px}
+.sb-footer{padding:14px 18px 18px;border-top:1px solid rgba(125,133,144,.08)}
+.uf{display:flex;align-items:center;gap:10px}
+.uav{width:32px;height:32px;border-radius:50%;background:var(--blue3);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#6ea8fe;flex-shrink:0}
+.uname{font-size:13px;font-weight:500;color:var(--text)}
+.urole{font-size:11px;color:var(--text2)}
+.lout{margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;transition:color .2s}
+.lout:hover{color:var(--red)}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{padding:14px 28px;border-bottom:1px solid rgba(125,133,144,.1);display:flex;align-items:center;gap:12px;flex-shrink:0;background:var(--bg)}
+.topbar-title{font-size:16px;font-weight:600;color:var(--text);flex:1}
+.topbar-badge{background:rgba(63,185,80,.12);color:var(--green);border:1px solid rgba(63,185,80,.25);border-radius:20px;font-size:10px;font-weight:600;padding:3px 10px;letter-spacing:.5px}
+.content{flex:1;overflow-y:auto}
+.page{display:none;padding:24px 28px;min-height:100%}
+.page.active{display:block}
+
+/* PAGE HEADER */
+.ph{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px}
+.ph-title{font-size:20px;font-weight:600;color:var(--text)}
+.ph-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.ph-right{display:flex;gap:8px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;border:1px solid transparent}
+.btn-blue{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn-blue:hover{background:var(--blue2)}
+.btn-ghost{background:var(--bg3);color:var(--text2);border-color:rgba(125,133,144,.2)}
+.btn-ghost:hover{border-color:rgba(125,133,144,.4);color:var(--text)}
+.btn svg{width:13px;height:13px}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.sc{background:var(--bg2);border:1px solid rgba(125,133,144,.1);border-radius:10px;padding:18px 20px}
+.sc-label{font-size:11px;font-weight:500;color:var(--text2);margin-bottom:8px}
+.sc-value{font-size:28px;font-weight:700;color:var(--text);margin-bottom:2px;line-height:1}
+.sc-desc{font-size:11px;color:var(--text3)}
+.sc-change{font-size:11px;margin-top:4px}
+.up{color:var(--green)}.down{color:var(--red)}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid rgba(125,133,144,.1);border-radius:10px;overflow:hidden}
+.card-h{padding:14px 18px;border-bottom:1px solid rgba(125,133,144,.08);display:flex;align-items:center;justify-content:space-between}
+.card-h-title{font-size:13px;font-weight:600;color:var(--text)}
+.card-h-action{font-size:12px;color:#6ea8fe;cursor:pointer}
+.card-h-action:hover{text-decoration:underline}
+
+/* PIPELINE */
+.pipeline{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.pc{background:var(--bg2);border:1px solid rgba(125,133,144,.1);border-radius:10px;overflow:hidden}
+.pc-h{padding:12px 14px;border-bottom:1px solid rgba(125,133,144,.08);display:flex;align-items:center;justify-content:space-between}
+.pc-h-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+.pc-h-count{font-size:18px;font-weight:700;color:var(--text)}
+.pc-b{padding:8px}
+.pcard{background:var(--bg3);border:1px solid rgba(125,133,144,.1);border-radius:6px;padding:12px;margin-bottom:6px;cursor:pointer;transition:border-color .15s}
+.pcard:last-child{margin-bottom:0}
+.pcard:hover{border-color:rgba(0,48,135,.5)}
+.pcard-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px}
+.pcard-model{font-size:11px;color:#6ea8fe;margin-bottom:8px}
+.pcard-footer{display:flex;align-items:center;justify-content:space-between}
+.pcard-val{font-size:12px;font-weight:600;color:var(--text2)}
+
+/* TABLE */
+.tcard{background:var(--bg2);border:1px solid rgba(125,133,144,.1);border-radius:10px;overflow:hidden}
+.ttb{padding:12px 16px;border-bottom:1px solid rgba(125,133,144,.08);display:flex;gap:10px;align-items:center}
+.si{flex:1;padding:8px 12px;background:var(--bg3);border:1px solid rgba(125,133,144,.15);border-radius:6px;color:var(--text);font-size:13px;font-family:'Inter',sans-serif;outline:none}
+.si:focus{border-color:var(--blue2)}
+.si::placeholder{color:var(--text3)}
+.fsel{padding:8px 10px;background:var(--bg3);border:1px solid rgba(125,133,144,.15);border-radius:6px;color:var(--text);font-size:12px;font-family:'Inter',sans-serif;outline:none}
+.fsel option{background:var(--bg3)}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 16px;text-align:left;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);border-bottom:1px solid rgba(125,133,144,.08)}
+td{padding:12px 16px;font-size:13px;color:var(--text);border-bottom:1px solid rgba(125,133,144,.05)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(125,133,144,.03);cursor:pointer}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap}
+.b-green{background:rgba(63,185,80,.1);color:var(--green);border:1px solid rgba(63,185,80,.2)}
+.b-blue{background:rgba(110,168,254,.1);color:#6ea8fe;border:1px solid rgba(110,168,254,.2)}
+.b-amber{background:rgba(210,153,34,.1);color:var(--amber);border:1px solid rgba(210,153,34,.2)}
+.b-red{background:rgba(248,81,73,.1);color:var(--red);border:1px solid rgba(248,81,73,.2)}
+.b-gray{background:rgba(125,133,144,.1);color:var(--text2);border:1px solid rgba(125,133,144,.2)}
+.b-purple{background:rgba(139,92,246,.1);color:#a78bfa;border:1px solid rgba(139,92,246,.2)}
+
+/* URGENCY DOT */
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
+.dot-green{background:var(--green)}
+.dot-amber{background:var(--amber)}
+.dot-red{background:var(--red)}
+.dot-gray{background:var(--text3)}
+
+/* ICON BTNS */
+.ib{width:26px;height:26px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;border:1px solid transparent;background:none;color:var(--text2)}
+.ib:hover{background:var(--bg3);border-color:rgba(125,133,144,.2);color:var(--text)}
+.ib svg{width:13px;height:13px}
+
+/* MODAL */
+.mover{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:500;align-items:center;justify-content:center;padding:20px}
+.mover.open{display:flex}
+.modal{background:var(--bg2);border:1px solid rgba(125,133,144,.15);border-radius:12px;padding:28px;width:560px;max-width:100%;max-height:90vh;overflow-y:auto;position:relative}
+.modal.wide{width:720px}
+.mc{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--text2);cursor:pointer;font-size:18px;line-height:1;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:5px;transition:all .15s}
+.mc:hover{background:var(--bg3);color:var(--text)}
+.mt{font-size:17px;font-weight:600;color:var(--text);margin-bottom:20px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fgroup{display:flex;flex-direction:column;gap:5px}
+.fgroup.full{grid-column:1/-1}
+.flabel{font-size:11px;font-weight:500;color:var(--text2)}
+.finput,.fselect,.ftextarea{padding:9px 11px;background:var(--bg3);border:1px solid rgba(125,133,144,.15);border-radius:6px;color:var(--text);font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s}
+.finput:focus,.fselect:focus,.ftextarea:focus{border-color:var(--blue2)}
+.fselect option{background:var(--bg3)}
+.ftextarea{resize:vertical;min-height:70px}
+.fa{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:18px;border-top:1px solid rgba(125,133,144,.08)}
+
+/* GRID 2 */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+/* LIST ROW */
+.lr{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid rgba(125,133,144,.05);transition:background .1s;cursor:pointer}
+.lr:last-child{border-bottom:none}
+.lr:hover{background:rgba(125,133,144,.03)}
+.lr-av{width:34px;height:34px;border-radius:50%;background:var(--blue3);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#6ea8fe;flex-shrink:0}
+.lr-main{flex:1;min-width:0}
+.lr-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lr-sub{font-size:11px;color:var(--text2);margin-top:1px}
+
+/* TOAST */
+#toast{position:fixed;bottom:20px;right:20px;background:var(--bg3);border:1px solid rgba(125,133,144,.2);border-radius:8px;padding:11px 18px;font-size:13px;color:var(--text);z-index:9999;opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+#toast.show{opacity:1;transform:translateY(0)}
+.empty{padding:40px 20px;text-align:center;color:var(--text2);font-size:13px}
+
+/* SEGUIMIENTO CARD */
+.seg-card{background:var(--bg2);border:1px solid rgba(125,133,144,.1);border-radius:8px;padding:14px 16px;display:flex;gap:14px;align-items:flex-start;cursor:pointer;transition:border-color .15s}
+.seg-card:hover{border-color:rgba(0,48,135,.4)}
+.seg-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.seg-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px}
+.seg-task{font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.5}
+.seg-footer{display:flex;align-items:center;gap:8px}
+.seg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+
+/* ENTREGA */
+.entrega-card{background:var(--bg2);border:1px solid rgba(63,185,80,.15);border-radius:10px;padding:18px 20px;border-left:3px solid var(--green)}
+.entrega-car{font-size:15px;font-weight:600;color:var(--text);margin-bottom:2px}
+.entrega-client{font-size:12px;color:#6ea8fe;margin-bottom:10px}
+.entrega-val{font-size:18px;font-weight:700;color:var(--green)}
+.entrega-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+
+@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}.pipeline{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="lbox">
+    <div class="llogo">
+      <div class="llogo-icon">CH</div>
+      <div>
+        <div class="llogo-text">Carhaus CRM</div>
+        <div class="llogo-sub">Volkswagen Carhaus · Sant Boi</div>
+      </div>
+    </div>
+    <div class="lh">Bienvenido de vuelta</div>
+    <div class="lsub">Accede a tu panel de ventas</div>
+    <label class="llabel">Usuario</label>
+    <input class="linput" id="lu" value="alexander" placeholder="Usuario" onkeydown="if(event.key==='Enter')doLogin()">
+    <label class="llabel">Contraseña</label>
+    <input class="linput" type="password" id="lp" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="lbtn" onclick="doLogin()">Entrar al CRM</button>
+    <div class="lerr" id="lerr">Usuario o contraseña incorrectos</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <aside class="sb">
+    <div class="sb-brand">
+      <div class="sb-brand-name">Carhaus CRM</div>
+      <div class="sb-brand-sub">Volkswagen · Sant Boi de Llobregat</div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-label">Principal</div>
+      <div class="ni active" onclick="nav('dashboard',this)">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+        Dashboard
+      </div>
+      <div class="sb-label">Ventas</div>
+      <div class="ni" onclick="nav('leads',this)">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
+        Leads
+        <span class="badge-count">8</span>
+      </div>
+      <div class="ni" onclick="nav('pipeline',this)">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
+        Pipeline
+      </div>
+      <div class="ni" onclick="nav('seguimientos',this)">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Seguimientos
+        <span class="badge-count" style="background:var(--amber);color:#000">3</span>
+      </div>
+      <div class="ni" onclick="nav('entregas',this)">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"/></svg>
+        Entregas
+      </div>
+    </nav>
+    <div class="sb-footer">
+      <div class="uf">
+        <div class="uav">AC</div>
+        <div>
+          <div class="uname">Alexander Calle</div>
+          <div class="urole">Asesor Comercial</div>
+        </div>
+        <button class="lout" onclick="logout()" title="Salir">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="tb-title">Dashboard</div>
+      <span class="topbar-badge">DEMO — Airmate</span>
+    </div>
+    <div class="content" id="content">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="stats">
+          <div class="sc">
+            <div class="sc-label">Leads activos</div>
+            <div class="sc-value">8</div>
+            <div class="sc-change up">↑ 3 nuevos este mes</div>
+          </div>
+          <div class="sc">
+            <div class="sc-label">Pipeline valor</div>
+            <div class="sc-value" style="font-size:22px">€ 214.900</div>
+            <div class="sc-change up">↑ 12% vs mes anterior</div>
+          </div>
+          <div class="sc">
+            <div class="sc-label">Ventas cerradas (julio)</div>
+            <div class="sc-value">3</div>
+            <div class="sc-change up">↑ 1 vs mes anterior</div>
+          </div>
+          <div class="sc">
+            <div class="sc-label">Seguimientos hoy</div>
+            <div class="sc-value" style="color:var(--amber)">3</div>
+            <div class="sc-change" style="color:var(--amber)">Pendientes de llamada</div>
+          </div>
+        </div>
+        <div class="g2">
+          <div class="card">
+            <div class="card-h"><span class="card-h-title">Próximos seguimientos</span><span class="card-h-action" onclick="nav('seguimientos',document.querySelectorAll('.ni')[3])">Ver todos →</span></div>
+            <div id="dash-segs"></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><span class="card-h-title">Leads más calientes</span><span class="card-h-action" onclick="nav('leads',document.querySelectorAll('.ni')[1])">Ver todos →</span></div>
+            <div id="dash-leads"></div>
+          </div>
+        </div>
+        <div class="g2">
+          <div class="card">
+            <div class="card-h"><span class="card-h-title">Pipeline por estado</span></div>
+            <div style="padding:16px 18px">
+              <div id="pipeline-bars"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-h"><span class="card-h-title">Últimas entregas</span><span class="card-h-action" onclick="nav('entregas',document.querySelectorAll('.ni')[4])">Ver todas →</span></div>
+            <div id="dash-entregas"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEADS -->
+      <div class="page" id="page-leads">
+        <div class="ph">
+          <div><div class="ph-title">Leads</div><div class="ph-sub" style="font-size:12px;color:var(--text2);margin-top:2px">Clientes interesados en comprar</div></div>
+          <div class="ph-right">
+            <button class="btn btn-blue" onclick="openM('lead')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>Nuevo Lead</button>
+          </div>
+        </div>
+        <div class="tcard">
+          <div class="ttb">
+            <input class="si" placeholder="Buscar nombre, modelo, email..." id="sq-l" oninput="renderLeads()">
+            <select class="fsel" id="sf-l" onchange="renderLeads()">
+              <option value="">Todos</option>
+              <option value="nuevo">Nuevo</option>
+              <option value="contactado">Contactado</option>
+              <option value="prueba">Prueba de conducción</option>
+              <option value="propuesta">Propuesta enviada</option>
+              <option value="negociacion">Negociación</option>
+              <option value="cerrado">Cerrado</option>
+            </select>
+          </div>
+          <table><thead><tr><th>Cliente</th><th>Modelo interesado</th><th>Presupuesto</th><th>Origen</th><th>Estado</th><th>Último contacto</th><th></th></tr></thead>
+          <tbody id="tb-l"></tbody></table>
+        </div>
+      </div>
+
+      <!-- PIPELINE -->
+      <div class="page" id="page-pipeline">
+        <div class="ph">
+          <div><div class="ph-title">Pipeline</div><div style="font-size:12px;color:var(--text2);margin-top:2px">€ 214.900 en operaciones activas</div></div>
+        </div>
+        <div class="pipeline" id="kanban"></div>
+      </div>
+
+      <!-- SEGUIMIENTOS -->
+      <div class="page" id="page-seguimientos">
+        <div class="ph">
+          <div><div class="ph-title">Seguimientos</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Llamadas y tareas pendientes</div></div>
+          <div class="ph-right"><button class="btn btn-blue" onclick="openM('seg')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>Nuevo</button></div>
+        </div>
+        <div class="seg-grid" id="seg-grid"></div>
+      </div>
+
+      <!-- ENTREGAS -->
+      <div class="page" id="page-entregas">
+        <div class="ph">
+          <div><div class="ph-title">Entregas</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Vehículos entregados — julio 2026</div></div>
+          <div class="ph-right"><button class="btn btn-blue" onclick="openM('entrega')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>Registrar entrega</button></div>
+        </div>
+        <div class="entrega-grid" id="entrega-grid"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODAL LEAD -->
+<div class="mover" id="m-lead">
+  <div class="modal">
+    <button class="mc" onclick="closeM('lead')">×</button>
+    <div class="mt" id="mt-lead">Nuevo Lead</div>
+    <div class="fg">
+      <div class="fgroup"><label class="flabel">Nombre *</label><input class="finput" id="ld-nombre" placeholder="Nombre completo"></div>
+      <div class="fgroup"><label class="flabel">Teléfono</label><input class="finput" id="ld-tel" placeholder="+34 600 000 000"></div>
+      <div class="fgroup full"><label class="flabel">Email</label><input class="finput" id="ld-email" type="email" placeholder="email@ejemplo.com"></div>
+      <div class="fgroup"><label class="flabel">Modelo interesado *</label><input class="finput" id="ld-modelo" placeholder="VW Golf, Tiguan, ID.4..."></div>
+      <div class="fgroup"><label class="flabel">Presupuesto</label><input class="finput" id="ld-presupuesto" type="number" placeholder="30000"></div>
+      <div class="fgroup"><label class="flabel">Origen</label>
+        <select class="fselect" id="ld-origen"><option>LinkedIn</option><option>Web</option><option>Referido</option><option>Presencial</option><option>Llamada entrante</option><option>Instagram</option></select>
+      </div>
+      <div class="fgroup"><label class="flabel">Estado</label>
+        <select class="fselect" id="ld-estado"><option value="nuevo">Nuevo</option><option value="contactado">Contactado</option><option value="prueba">Prueba de conducción</option><option value="propuesta">Propuesta enviada</option><option value="negociacion">Negociación</option><option value="cerrado">Cerrado</option></select>
+      </div>
+      <div class="fgroup full"><label class="flabel">Notas</label><textarea class="ftextarea" id="ld-notas" placeholder="Detalles, preferencias, comentarios..."></textarea></div>
+    </div>
+    <div class="fa">
+      <button class="btn btn-ghost" onclick="closeM('lead')">Cancelar</button>
+      <button class="btn btn-blue" onclick="saveLead()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SEGUIMIENTO -->
+<div class="mover" id="m-seg">
+  <div class="modal">
+    <button class="mc" onclick="closeM('seg')">×</button>
+    <div class="mt">Nuevo Seguimiento</div>
+    <div class="fg">
+      <div class="fgroup full"><label class="flabel">Cliente *</label><input class="finput" id="sg-cliente" placeholder="Nombre del cliente"></div>
+      <div class="fgroup"><label class="flabel">Fecha *</label><input class="finput" id="sg-fecha" type="date"></div>
+      <div class="fgroup"><label class="flabel">Tipo</label>
+        <select class="fselect" id="sg-tipo"><option>Llamada</option><option>WhatsApp</option><option>Email</option><option>Visita concesionario</option><option>Prueba de conducción</option></select>
+      </div>
+      <div class="fgroup full"><label class="flabel">Tarea / Objetivo</label><textarea class="ftextarea" id="sg-tarea" placeholder="¿Qué vas a hacer o preguntar?"></textarea></div>
+    </div>
+    <div class="fa">
+      <button class="btn btn-ghost" onclick="closeM('seg')">Cancelar</button>
+      <button class="btn btn-blue" onclick="saveSeg()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ENTREGA -->
+<div class="mover" id="m-entrega">
+  <div class="modal">
+    <button class="mc" onclick="closeM('entrega')">×</button>
+    <div class="mt">Registrar Entrega</div>
+    <div class="fg">
+      <div class="fgroup full"><label class="flabel">Cliente *</label><input class="finput" id="en-cliente" placeholder="Nombre del cliente"></div>
+      <div class="fgroup full"><label class="flabel">Vehículo *</label><input class="finput" id="en-vehiculo" placeholder="VW Tiguan 1.5 eTSI DSG..."></div>
+      <div class="fgroup"><label class="flabel">Precio de venta (€)</label><input class="finput" id="en-precio" type="number" placeholder="35000"></div>
+      <div class="fgroup"><label class="flabel">Fecha de entrega</label><input class="finput" id="en-fecha" type="date"></div>
+      <div class="fgroup full"><label class="flabel">Notas</label><textarea class="ftextarea" id="en-notas" placeholder="Origen del cliente, financiación, etc."></textarea></div>
+    </div>
+    <div class="fa">
+      <button class="btn btn-ghost" onclick="closeM('entrega')">Cancelar</button>
+      <button class="btn btn-blue" onclick="saveEntrega()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ─── DATA ───
+let LEADS = [
+  {id:1,nombre:'Teresa & Antonio',tel:'+34 610 234 567',email:'teresa@gmail.com',modelo:'Tiguan eHybrid',presupuesto:48000,origen:'Presencial',estado:'cerrado',notas:'De Ascó. Vinieron hasta Sant Boi. Entrega realizada.',uc:'14 jun'},
+  {id:2,nombre:'Eric Montserrat',tel:'+34 622 345 678',email:'eric@empresa.com',modelo:'T-Roc 1.5 TSI',presupuesto:32000,origen:'Referido',estado:'cerrado',notas:'Cumpleaños el día de la entrega. Viaje por Italia.',uc:'20 jun'},
+  {id:3,nombre:'María José Pons',tel:'+34 633 456 789',email:'mariajose@pons.es',modelo:'ID.4 Pro',presupuesto:45000,origen:'LinkedIn',estado:'negociacion',notas:'Muy interesada en eléctrico. Tiene dudas sobre autonomía. Hizo prueba de conducción la semana pasada.',uc:'28 jun'},
+  {id:4,nombre:'Roberto Ferrer',tel:'+34 644 567 890',email:'roberto@ferrer.com',modelo:'Golf 8 GTI',presupuesto:38000,origen:'Web',estado:'propuesta',notas:'Fan del GTI. Quiere color negro. Esperando respuesta de financiación.',uc:'30 jun'},
+  {id:5,nombre:'Carles Mas',tel:'+34 655 678 901',email:'carles@mas.es',modelo:'Polo 1.0 TSI',presupuesto:22000,origen:'Presencial',estado:'prueba',notas:'Primer coche. Viene con su pareja. Quiere hacer prueba esta semana.',uc:'1 jul'},
+  {id:6,nombre:'Silvia Romeu',tel:'+34 666 789 012',email:'silvia@romeu.com',modelo:'T-Cross 1.0 TSI',presupuesto:24000,origen:'Instagram',estado:'contactado',notas:'Vio una publicación del T-Cross. Quiere información de financiación.',uc:'1 jul'},
+  {id:7,nombre:'Jordi Puig',tel:'+34 677 890 123',email:'jordi@empresa.es',modelo:'Multivan 2.0 TDI',presupuesto:65000,origen:'LinkedIn',estado:'contactado',notas:'Empresa de reparto. Quiere renting para flota de 3 unidades.',uc:'hoy'},
+  {id:8,nombre:'Ana Llopis',tel:'+34 688 901 234',email:'ana@llopis.com',modelo:'ID.5 GTX',presupuesto:55000,origen:'Referido',estado:'nuevo',notas:'La recomendó Teresa. Quiere un eléctrico potente.',uc:'hoy'},
+];
+
+let SEGS = [
+  {id:1,cliente:'María José Pons',fecha:'2026-07-01',tipo:'Llamada',tarea:'Resolver dudas sobre autonomía real del ID.4. Mencionar la ruta Costa Brava que hice con el ID.5.', urgencia:'hoy'},
+  {id:2,cliente:'Roberto Ferrer',fecha:'2026-07-01',tipo:'WhatsApp',tarea:'Seguimiento propuesta Golf GTI. Preguntarle si ha tomado decisión sobre la financiación.', urgencia:'hoy'},
+  {id:3,cliente:'Jordi Puig',fecha:'2026-07-01',tipo:'Email',tarea:'Enviar propuesta de renting para flota Multivan x3 con condiciones especiales empresa.', urgencia:'hoy'},
+  {id:4,cliente:'Carles Mas',fecha:'2026-07-03',tipo:'Prueba de conducción',tarea:'Prueba Polo 1.0 TSI confirmada. Preparar el coche. Viene con su pareja.', urgencia:'semana'},
+  {id:5,cliente:'Silvia Romeu',fecha:'2026-07-04',tipo:'Llamada',tarea:'Llamar para explicar opciones de financiación T-Cross. Tiene buen perfil para leasing.', urgencia:'semana'},
+  {id:6,cliente:'Ana Llopis',fecha:'2026-07-07',tipo:'Visita concesionario',tarea:'Primera visita. Viene referida por Teresa. Preparar argumentario ID.5 GTX.', urgencia:'semana'},
+];
+
+let ENTREGAS = [
+  {id:1,cliente:'Teresa & Antonio',vehiculo:'Volkswagen Tiguan eHybrid 1.4 TSI · Plata',precio:48200,fecha:'2026-06-14',notas:'Vinieron desde Ascó. Cliente muy satisfecho. Posible referido.'},
+  {id:2,cliente:'Eric Montserrat',vehiculo:'Volkswagen T-Roc 1.5 TSI 150cv · Negro',precio:32500,fecha:'2026-06-20',notas:'Entrega el día de su cumpleaños. Viaje de verano por Italia.'},
+  {id:3,cliente:'Empresa Logística Sant Boi SL',vehiculo:'Volkswagen T-Roc · Flota equipo comercial x2',precio:61000,fecha:'2026-06-28',notas:'Renting empresarial. 3 años. Posible ampliación de flota en diciembre.'},
+];
+
+let editId = {lead:null,seg:null,entrega:null};
+
+const PASS = {alexander:'Carhaus2024'};
+
+// ─── LOGIN ───
+function doLogin(){
+  const u=document.getElementById('lu').value.toLowerCase().trim();
+  const p=document.getElementById('lp').value;
+  if(PASS[u]&&PASS[u]===p){
+    document.getElementById('login').style.display='none';
+    document.getElementById('app').style.display='flex';
+    renderAll();
+  } else {
+    document.getElementById('lerr').style.display='block';
+    document.getElementById('lp').value='';
+  }
+}
+// auto-login para demo
+window.onload=()=>{document.getElementById('lp').value='Carhaus2024';setTimeout(doLogin,400);}
+
+function logout(){document.getElementById('app').style.display='none';document.getElementById('login').style.display='flex';document.getElementById('lp').value='';}
+
+// ─── NAV ───
+const TITLES={dashboard:'Dashboard',leads:'Leads',pipeline:'Pipeline',seguimientos:'Seguimientos',entregas:'Entregas'};
+function nav(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  el.classList.add('active');
+  document.getElementById('tb-title').textContent=TITLES[id]||id;
+}
+
+function renderAll(){renderDash();renderLeads();renderPipeline();renderSegs();renderEntregas();}
+
+// ─── DASHBOARD ───
+function renderDash(){
+  // Seguimientos urgentes
+  const urg=SEGS.filter(s=>s.urgencia==='hoy');
+  document.getElementById('dash-segs').innerHTML=urg.map(s=>`
+    <div class="lr">
+      <div class="lr-av" style="background:rgba(210,153,34,.1);border-color:rgba(210,153,34,.3);color:var(--amber)">${s.tipo[0]}</div>
+      <div class="lr-main">
+        <div class="lr-name">${esc(s.cliente)}</div>
+        <div class="lr-sub">${esc(s.tipo)} · ${esc(s.tarea.substring(0,50))}${s.tarea.length>50?'...':''}</div>
+      </div>
+      <span class="badge b-amber" style="font-size:10px">Hoy</span>
+    </div>`).join('');
+
+  // Leads calientes
+  const hot=LEADS.filter(l=>l.estado==='negociacion'||l.estado==='propuesta').slice(0,4);
+  document.getElementById('dash-leads').innerHTML=hot.map(l=>`
+    <div class="lr">
+      <div class="lr-av">${initials(l.nombre)}</div>
+      <div class="lr-main">
+        <div class="lr-name">${esc(l.nombre)}</div>
+        <div class="lr-sub">${esc(l.modelo)} · ${fmtE(l.presupuesto)}</div>
+      </div>
+      ${bEstado(l.estado)}
+    </div>`).join('');
+
+  // Pipeline bars
+  const stages=['nuevo','contactado','prueba','propuesta','negociacion','cerrado'];
+  const labels={'nuevo':'Nuevo','contactado':'Contactado','prueba':'Prueba','propuesta':'Propuesta','negociacion':'Negociación','cerrado':'Cerrado'};
+  const max=Math.max(...stages.map(s=>LEADS.filter(l=>l.estado===s).length))||1;
+  document.getElementById('pipeline-bars').innerHTML=stages.map(s=>{
+    const count=LEADS.filter(l=>l.estado===s).length;
+    const pct=Math.round(count/max*100);
+    return `<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:12px;color:var(--text2)">${labels[s]}</span>
+        <span style="font-size:12px;font-weight:600;color:var(--text)">${count}</span>
+      </div>
+      <div style="height:6px;background:var(--bg3);border-radius:3px">
+        <div style="height:6px;width:${pct}%;background:var(--blue);border-radius:3px;transition:width .6s"></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Últimas entregas
+  document.getElementById('dash-entregas').innerHTML=ENTREGAS.map(e=>`
+    <div class="lr">
+      <div class="lr-av" style="background:rgba(63,185,80,.1);border-color:rgba(63,185,80,.25);color:var(--green)">✓</div>
+      <div class="lr-main">
+        <div class="lr-name">${esc(e.cliente)}</div>
+        <div class="lr-sub">${esc(e.vehiculo.split('·')[0].trim())} · ${fmtE(e.precio)}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ─── LEADS ───
+function renderLeads(){
+  const q=(document.getElementById('sq-l').value||'').toLowerCase();
+  const est=(document.getElementById('sf-l').value||'');
+  let rows=LEADS.filter(l=>
+    (!q||(l.nombre||'').toLowerCase().includes(q)||(l.modelo||'').toLowerCase().includes(q)||(l.email||'').toLowerCase().includes(q))&&
+    (!est||l.estado===est)
+  );
+  document.getElementById('tb-l').innerHTML=rows.map(l=>`<tr onclick="editLeadRow(${l.id})">
+    <td>
+      <div style="font-weight:500">${esc(l.nombre)}</div>
+      <div style="font-size:11px;color:var(--text2)">${l.tel||l.email||''}</div>
+    </td>
+    <td>${esc(l.modelo)}</td>
+    <td>${fmtE(l.presupuesto)}</td>
+    <td><span class="badge b-gray">${esc(l.origen)}</span></td>
+    <td>${bEstado(l.estado)}</td>
+    <td style="color:var(--text2);font-size:12px">${l.uc}</td>
+    <td onclick="event.stopPropagation()"><div style="display:flex;gap:4px">
+      <button class="ib" onclick="editLeadRow(${l.id})">${icoE()}</button>
+      <button class="ib" style="color:var(--red)" onclick="delLead(${l.id})">${icoD()}</button>
+    </div></td>
+  </tr>`).join('');
+}
+
+function editLeadRow(id){
+  const l=LEADS.find(x=>x.id===id);if(!l)return;
+  editId.lead=id;
+  sv('ld-nombre',l.nombre);sv('ld-tel',l.tel);sv('ld-email',l.email);
+  sv('ld-modelo',l.modelo);sv('ld-presupuesto',l.presupuesto);sv('ld-origen',l.origen);
+  sv('ld-estado',l.estado);sv('ld-notas',l.notas);
+  document.getElementById('mt-lead').textContent='Editar Lead';
+  document.getElementById('m-lead').classList.add('open');
+}
+function saveLead(){
+  const nombre=gv('ld-nombre');if(!nombre){toast('Nombre obligatorio');return;}
+  const d={nombre,tel:gv('ld-tel'),email:gv('ld-email'),modelo:gv('ld-modelo'),presupuesto:Number(gv('ld-presupuesto'))||0,origen:gv('ld-origen'),estado:gv('ld-estado'),notas:gv('ld-notas'),uc:'hoy'};
+  if(editId.lead){const i=LEADS.findIndex(x=>x.id===editId.lead);LEADS[i]={...LEADS[i],...d};toast('Lead actualizado');}
+  else{LEADS.unshift({...d,id:Date.now()});toast('Lead añadido');}
+  closeM('lead');renderAll();
+}
+function delLead(id){if(!confirm('Eliminar este lead?'))return;LEADS=LEADS.filter(x=>x.id!==id);renderAll();toast('Eliminado');}
+
+// ─── PIPELINE ───
+const KCOLS=[{k:'nuevo',l:'Nuevo'},{k:'contactado',l:'Contactado'},{k:'prueba',l:'Prueba conducción'},{k:'propuesta',l:'Propuesta'},{k:'negociacion',l:'Negociación'}];
+function renderPipeline(){
+  document.getElementById('kanban').innerHTML=KCOLS.map(col=>{
+    const items=LEADS.filter(l=>l.estado===col.k);
+    return `<div class="pc">
+      <div class="pc-h"><span class="pc-h-label">${col.l}</span><span class="pc-h-count">${items.length}</span></div>
+      <div class="pc-b">${items.map(l=>`
+        <div class="pcard" onclick="editLeadRow(${l.id})">
+          <div class="pcard-name">${esc(l.nombre)}</div>
+          <div class="pcard-model">${esc(l.modelo)}</div>
+          <div class="pcard-footer">
+            <span class="pcard-val">${fmtE(l.presupuesto)}</span>
+            <span style="font-size:10px;color:var(--text3)">${esc(l.origen)}</span>
+          </div>
+        </div>`).join('')||'<div style="padding:12px 0;text-align:center;font-size:12px;color:var(--text3)">—</div>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── SEGUIMIENTOS ───
+const SEG_ICONS={Llamada:'📞',WhatsApp:'💬',Email:'✉️','Visita concesionario':'🏢','Prueba de conducción':'🚗'};
+const SEG_COLORS={hoy:'b-amber',semana:'b-blue'};
+function renderSegs(){
+  document.getElementById('seg-grid').innerHTML=SEGS.map(s=>`
+    <div class="seg-card">
+      <div class="seg-icon" style="background:var(--bg3)">${SEG_ICONS[s.tipo]||'📌'}</div>
+      <div style="flex:1">
+        <div class="seg-name">${esc(s.cliente)}</div>
+        <div class="seg-task">${esc(s.tarea)}</div>
+        <div class="seg-footer">
+          <span class="badge ${SEG_COLORS[s.urgencia]||'b-gray'}">${s.urgencia==='hoy'?'Hoy':'Esta semana'}</span>
+          <span class="badge b-gray">${esc(s.tipo)}</span>
+        </div>
+      </div>
+      <button class="ib" onclick="delSeg(${s.id})" style="color:var(--text3)">${icoD()}</button>
+    </div>`).join('');
+}
+function saveSeg(){
+  const cliente=gv('sg-cliente');if(!cliente){toast('Cliente obligatorio');return;}
+  const fecha=gv('sg-fecha');
+  const today=new Date().toISOString().split('T')[0];
+  const diff=fecha?(new Date(fecha)-new Date(today))/(86400000):7;
+  const urgencia=diff<=0?'hoy':'semana';
+  SEGS.unshift({id:Date.now(),cliente,fecha,tipo:gv('sg-tipo'),tarea:gv('sg-tarea'),urgencia});
+  closeM('seg');renderAll();toast('Seguimiento añadido');
+}
+function delSeg(id){SEGS=SEGS.filter(x=>x.id!==id);renderAll();toast('Completado');}
+
+// ─── ENTREGAS ───
+function renderEntregas(){
+  document.getElementById('entrega-grid').innerHTML=ENTREGAS.map(e=>`
+    <div class="entrega-card">
+      <div class="entrega-car">${esc(e.vehiculo)}</div>
+      <div class="entrega-client">${esc(e.cliente)}</div>
+      <div class="entrega-val">${fmtE(e.precio)}</div>
+      ${e.notas?`<div style="font-size:12px;color:var(--text2);margin-top:8px;line-height:1.6">${esc(e.notas)}</div>`:''}
+      <div style="font-size:11px;color:var(--text3);margin-top:10px">${fmtD(e.fecha)}</div>
+    </div>`).join('');
+}
+function saveEntrega(){
+  const cliente=gv('en-cliente');if(!cliente){toast('Cliente obligatorio');return;}
+  ENTREGAS.unshift({id:Date.now(),cliente,vehiculo:gv('en-vehiculo'),precio:Number(gv('en-precio'))||0,fecha:gv('en-fecha'),notas:gv('en-notas')});
+  closeM('entrega');renderAll();toast('Entrega registrada');
+}
+
+// ─── MODALS ───
+function openM(type){
+  editId[type]=null;
+  document.querySelectorAll('#m-'+type+' .finput,#m-'+type+' .ftextarea').forEach(el=>el.value='');
+  document.querySelectorAll('#m-'+type+' .fselect').forEach(el=>el.selectedIndex=0);
+  if(type==='seg')document.getElementById('sg-fecha').value=new Date().toISOString().split('T')[0];
+  if(type==='entrega')document.getElementById('en-fecha').value=new Date().toISOString().split('T')[0];
+  if(type==='lead')document.getElementById('mt-lead').textContent='Nuevo Lead';
+  document.getElementById('m-'+type).classList.add('open');
+}
+function closeM(type){document.getElementById('m-'+type).classList.remove('open');}
+document.querySelectorAll('.mover').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
+
+// ─── UTILS ───
+function gv(id){return(document.getElementById(id)?.value||'').trim();}
+function sv(id,val){const el=document.getElementById(id);if(el)el.value=val||'';}
+function esc(x){return String(x||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmtE(n){if(!n)return'—';return'€ '+Number(n).toLocaleString('es-ES');}
+function fmtD(d){if(!d)return'—';const[y,m,day]=String(d).split('-');return`${parseInt(day)} ${'ene feb mar abr may jun jul ago sep oct nov dic'.split(' ')[parseInt(m)-1]} ${y}`;}
+function initials(n){return String(n||'').trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase();}
+function bEstado(e){const m={nuevo:'b-gray',contactado:'b-blue',prueba:'b-purple',propuesta:'b-amber',negociacion:'b-red',cerrado:'b-green'};const l={nuevo:'Nuevo',contactado:'Contactado',prueba:'Prueba conducción',propuesta:'Propuesta enviada',negociacion:'Negociación',cerrado:'Cerrado'};return`<span class="badge ${m[e]||'b-gray'}">${l[e]||e}</span>`;}
+function icoE(){return`<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>`;}
+function icoD(){return`<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>`;}
+let _tt;
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),2400);}
+</script>
+</body>
+</html>
