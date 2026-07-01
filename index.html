@@ -672,7 +672,7 @@ tr:hover td{background:var(--gd);cursor:pointer}
         </div>
         <div class="psummary" id="rep-summary"></div>
         <div class="tcard">
-          <table><thead><tr><th>Empleado</th><th>Lead</th><th>Tel&#233;fono</th><th>Estado</th></tr></thead>
+          <table><thead><tr><th>Empleado</th><th>Lead</th><th>Tel&#233;fono</th><th>Sector</th><th>&#218;lt. contacto</th><th>Resultado</th><th>Estado</th></tr></thead>
           <tbody id="tb-rep"></tbody></table>
           <div class="empty" id="em-rep" style="display:none"><div class="empty-icon">&#128202;</div>Sin leads registrados</div>
         </div>
@@ -688,7 +688,7 @@ tr:hover td{background:var(--gd);cursor:pointer}
           </button>
         </div>
         <div class="tcard">
-          <table><thead><tr><th>Nombre</th><th>Tel&#233;fono</th><th>Estado</th><th>Notas</th><th>Acciones</th></tr></thead>
+          <table><thead><tr><th>Nombre</th><th>Tel&#233;fono</th><th>Sector</th><th>&#218;lt. contacto</th><th>Resultado</th><th>Estado</th><th>Acciones</th></tr></thead>
           <tbody id="tb-lead"></tbody></table>
           <div class="empty" id="em-lead" style="display:none"><div class="empty-icon">&#128100;</div>Sin leads a&#241;adidos</div>
         </div>
@@ -818,15 +818,26 @@ tr:hover td{background:var(--gd);cursor:pointer}
     <div class="fg">
       <div class="fgroup full"><label class="flabel">Nombre *</label><input class="finput" id="lead-nombre" placeholder="Nombre del lead"></div>
       <div class="fgroup"><label class="flabel">Tel&#233;fono</label><input class="finput" id="lead-telefono" placeholder="+34 600 000 000"></div>
+      <div class="fgroup"><label class="flabel">Sector de captaci&#243;n</label><input class="finput" id="lead-sector" placeholder="Inmobiliaria, Salud, E-commerce..."></div>
+      <div class="fgroup"><label class="flabel">Fecha de contacto</label><input class="finput" id="lead-fecha" type="date"></div>
       <div class="fgroup"><label class="flabel">Estado</label>
         <select class="fselect" id="lead-estado"><option value="nuevo">Nuevo</option><option value="contactado">Contactado</option><option value="respondido">Respondido</option><option value="cerrado">Cerrado</option></select>
       </div>
-      <div class="fgroup full"><label class="flabel">Notas</label><textarea class="ftextarea" id="lead-notas" placeholder="Detalles del lead..."></textarea></div>
+      <div class="fgroup full"><label class="flabel">Resultado del contacto</label><input class="finput" id="lead-resultado" placeholder="Ej: Interesado, pide demo la pr&#243;xima semana"></div>
+      <div class="fgroup full"><label class="flabel">Notas</label><textarea class="ftextarea" id="lead-notas" placeholder="Detalles adicionales del lead..."></textarea></div>
     </div>
     <div class="fa">
       <button class="btn btn-outline" onclick="closeM('lead')">Cancelar</button>
       <button class="btn btn-gold" onclick="saveLead()">Guardar</button>
     </div>
+  </div>
+</div>
+
+<!-- MODAL LEAD DETALLE -->
+<div class="mover" id="m-ldetail">
+  <div class="modal wide">
+    <button class="mc" onclick="closeM('ldetail')">&#215;</button>
+    <div id="ldetail-content"></div>
   </div>
 </div>
 
@@ -1351,28 +1362,55 @@ function renderMisLeads(){
   const tb=document.getElementById('tb-lead');if(!tb)return;
   const mine=LEADS.filter(l=>l.empleado_id===currentUser.id);
   document.getElementById('em-lead').style.display=mine.length?'none':'';
-  tb.innerHTML=mine.map(l=>`<tr>
-    <td><strong>${esc(l.nombre)}</strong></td>
+  tb.innerHTML=mine.map(l=>`<tr onclick="openLeadDetail(${l.id})" style="cursor:pointer">
+    <td><strong>${esc(l.nombre)}</strong>${l.email?`<div style="font-size:11px;color:var(--text2)">${esc(l.email)}</div>`:''}</td>
     <td>${esc(l.telefono||'—')}</td>
+    <td>${l.sector?`<span class="badge bg-gray">${esc(l.sector)}</span>`:'—'}</td>
+    <td style="font-size:12px;color:var(--text2)">${l.fecha_contacto?fmtD(l.fecha_contacto):'—'}</td>
+    <td style="max-width:160px"><div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:var(--text2)">${esc(l.resultado||'—')}</div></td>
     <td>${bLead(l.estado)}</td>
-    <td style="max-width:200px"><div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2)">${esc(l.notas||'')}</div></td>
-    <td><div class="acts">
+    <td onclick="event.stopPropagation()"><div class="acts">
       <button class="ib" onclick="editLead(${l.id})" title="Editar">${icoE()}</button>
       <button class="ib del" onclick="delR('stradale_leads',${l.id})" title="Eliminar">${icoD()}</button>
     </div></td>
   </tr>`).join('');
 }
+function openLeadDetail(id){
+  const l=LEADS.find(x=>x.id===id);if(!l)return;
+  document.getElementById('ldetail-content').innerHTML=`
+    <div style="display:flex;align-items:flex-start;gap:18px;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--gb)">
+      <div class="cd-av">${l.nombre.split(' ').slice(0,2).map(n=>n[0]).join('').toUpperCase()}</div>
+      <div style="flex:1">
+        <div class="cd-name">${esc(l.nombre)}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+          ${bLead(l.estado)}
+          ${l.sector?`<span class="badge bg-gray">${esc(l.sector)}</span>`:''}
+        </div>
+      </div>
+      <button class="btn btn-outline" onclick="closeM('ldetail');editLead(${l.id})">Editar</button>
+    </div>
+    <div class="cd-info-grid" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:20px">
+      <div class="cd-info-box"><div class="cd-info-label">Tel&#233;fono</div><div class="cd-info-value">${esc(l.telefono||'—')}</div></div>
+      <div class="cd-info-box"><div class="cd-info-label">Email</div><div class="cd-info-value" style="font-size:12px">${esc(l.email||'—')}</div></div>
+      <div class="cd-info-box"><div class="cd-info-label">&#218;lt. contacto</div><div class="cd-info-value">${l.fecha_contacto?fmtD(l.fecha_contacto):'—'}</div></div>
+    </div>
+    ${l.resultado?`<div style="margin-bottom:16px"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:8px">Resultado del contacto</div><div style="background:var(--bg3);border:1px solid var(--gb);border-radius:8px;padding:14px;font-size:13px;color:var(--text);line-height:1.7">${esc(l.resultado)}</div></div>`:''}
+    ${l.notas?`<div><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:8px">Notas</div><div style="font-size:13px;color:var(--text2);line-height:1.7">${esc(l.notas)}</div></div>`:''}
+  `;
+  document.getElementById('m-ldetail').classList.add('open');
+}
 async function saveLead(){
-  const d={nombre:v('lead-nombre'),telefono:v('lead-telefono'),estado:v('lead-estado'),notas:v('lead-notas')};
+  const d={nombre:v('lead-nombre'),telefono:v('lead-telefono'),sector:v('lead-sector'),fecha_contacto:v('lead-fecha')||null,estado:v('lead-estado'),resultado:v('lead-resultado'),notas:v('lead-notas')};
   if(!d.nombre){toast('Nombre obligatorio');return;}
   if(eId.lead){await sbPatch('stradale_leads',eId.lead,d);toast('Lead actualizado');}
-  else{d.empleado_id=currentUser.id;await sbPost('stradale_leads',d);toast('Lead creado');}
+  else{d.empleado_id=currentUser.id;d.empleado=currentUser.name;await sbPost('stradale_leads',d);toast('Lead creado');}
   closeM('lead');await loadAll();
 }
 function editLead(id){
   const l=LEADS.find(x=>x.id===id);if(!l)return;
   eId.lead=id;
-  s('lead-nombre',l.nombre);s('lead-telefono',l.telefono);s('lead-estado',l.estado);s('lead-notas',l.notas);
+  s('lead-nombre',l.nombre);s('lead-telefono',l.telefono);s('lead-sector',l.sector);
+  s('lead-fecha',l.fecha_contacto);s('lead-estado',l.estado);s('lead-resultado',l.resultado);s('lead-notas',l.notas);
   document.getElementById('mt-lead').textContent='Editar Lead';
   document.getElementById('m-lead').classList.add('open');
 }
@@ -1390,7 +1428,15 @@ function renderReportes(){
   document.getElementById('em-rep').style.display=LEADS.length?'none':'';
   tb.innerHTML=LEADS.map(l=>{
     const emp=EMP.find(e=>e.id===l.empleado_id);
-    return `<tr><td>${esc(emp?emp.nombre:'—')}</td><td>${esc(l.nombre)}</td><td>${esc(l.telefono||'—')}</td><td>${bLead(l.estado)}</td></tr>`;
+    return `<tr onclick="openLeadDetail(${l.id})" style="cursor:pointer">
+      <td>${esc(emp?emp.nombre:'—')}</td>
+      <td><strong>${esc(l.nombre)}</strong>${l.email?`<div style="font-size:11px;color:var(--text2)">${esc(l.email)}</div>`:''}</td>
+      <td>${esc(l.telefono||'—')}</td>
+      <td>${l.sector?`<span class="badge bg-gray">${esc(l.sector)}</span>`:'—'}</td>
+      <td style="font-size:12px;color:var(--text2)">${l.fecha_contacto?fmtD(l.fecha_contacto):'—'}</td>
+      <td style="max-width:160px"><div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:var(--text2)">${esc(l.resultado||'—')}</div></td>
+      <td>${bLead(l.estado)}</td>
+    </tr>`;
   }).join('');
 }
 
@@ -1401,7 +1447,7 @@ async function delR(table,id){
 }
 
 // ── MODAL ──
-const MODAL_DEFAULTS={cliente:{title:'Nuevo Cliente',fields:['c-nombre','c-empresa','c-email','c-tel','c-linkedin','c-sector','c-pago','c-tags','c-notas'],selects:['c-estado']},llamada:{title:'Nueva Llamada',fields:['l-fecha','l-hora','l-cliente','l-dur','l-link','l-notas','l-resumen'],selects:['l-tipo','l-estado']},grabacion:{title:'Nueva Grabación',fields:['g-titulo','g-cliente','g-fecha','g-dur','g-link','g-notas'],selects:[]},proyecto:{title:'Nuevo Proyecto',fields:['p-nombre','p-cliente','p-valor','p-inicio','p-entrega','p-desc'],selects:['p-estado']},empleado:{title:'Nuevo Empleado',fields:['emp-nombre','emp-usuario','emp-password'],selects:[]},lead:{title:'Nuevo Lead',fields:['lead-nombre','lead-telefono','lead-notas'],selects:['lead-estado']}};
+const MODAL_DEFAULTS={cliente:{title:'Nuevo Cliente',fields:['c-nombre','c-empresa','c-email','c-tel','c-linkedin','c-sector','c-pago','c-tags','c-notas'],selects:['c-estado']},llamada:{title:'Nueva Llamada',fields:['l-fecha','l-hora','l-cliente','l-dur','l-link','l-notas','l-resumen'],selects:['l-tipo','l-estado']},grabacion:{title:'Nueva Grabación',fields:['g-titulo','g-cliente','g-fecha','g-dur','g-link','g-notas'],selects:[]},proyecto:{title:'Nuevo Proyecto',fields:['p-nombre','p-cliente','p-valor','p-inicio','p-entrega','p-desc'],selects:['p-estado']},empleado:{title:'Nuevo Empleado',fields:['emp-nombre','emp-usuario','emp-password'],selects:[]},lead:{title:'Nuevo Lead',fields:['lead-nombre','lead-telefono','lead-sector','lead-fecha','lead-resultado','lead-notas'],selects:['lead-estado']}};
 const MODAL_EID={cliente:'c',llamada:'l',grabacion:'g',proyecto:'p',empleado:'emp',lead:'lead'};
 function openM(type){
   eId[MODAL_EID[type]]=null;
