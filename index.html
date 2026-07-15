@@ -13,6 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --bg:      #0b0e1a;
@@ -900,11 +901,32 @@ tr:hover td{background:var(--gd);cursor:pointer}
 <script>
 const SB = 'https://vjofxmfwdybktpwiuanc.supabase.co';
 const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqb2Z4bWZ3ZHlia3Rwd2l1YW5jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzU5NDYsImV4cCI6MjA5MDA1MTk0Nn0.ixU-33c0FEkO7F5xjWb3YHkvj_pQuR0gsJETrGA8ZTE';
-const H = {apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':'application/json',Prefer:'return=representation'};
-
-const USERS = {
-  fernando:   {pass:'Stradale2024',name:'Fernando de Andrés',role:'Director',initials:'FA'},
-  andrea:     {pass:'Secretaria24',name:'Andrea',role:'Asistenta',initials:'AN',noDash:true}
+// El login ahora pasa por /api/stradale-login (verifica la contraseña con hash
+// server-side y devuelve una sesión real) — antes se comparaba la contraseña en
+// texto plano directamente contra Supabase con la clave pública, visible por
+// cualquiera que abriera el código de la página.
+let AUTH_BEARER=KEY;
+function H(){return {apikey:KEY,Authorization:'Bearer '+AUTH_BEARER,'Content-Type':'application/json',Prefer:'return=representation'};}
+let _authClient=null;
+async function startAuthSession(access_token,refresh_token){
+  _authClient=supabase.createClient(SB,KEY);
+  await _authClient.auth.setSession({access_token,refresh_token});
+  AUTH_BEARER=access_token;
+  _authClient.auth.onAuthStateChange((event,session)=>{
+    if(session){
+      AUTH_BEARER=session.access_token;
+      try{
+        const saved=JSON.parse(localStorage.getItem('stradale_session')||'{}');
+        saved.token=session.access_token;saved.refresh=session.refresh_token;
+        localStorage.setItem('stradale_session',JSON.stringify(saved));
+      }catch(e){}
+    }
+  });
+}
+// Solo define quién ve el panel de admin/dashboard — ya NO contiene contraseñas.
+const ADMIN_ROLES = {
+  fernando: {role:'Director',initials:'FA'},
+  andrea:   {role:'Asistenta',initials:'AN',noDash:true}
 };
 
 let C=[],L=[],G=[],P=[],EMP=[],LEADS=[],GASTOS=[];
@@ -923,25 +945,44 @@ function initialsOf(name){return(name||'').trim().split(/\s+/).slice(0,2).map(n=
 async function doLogin(){
   const u=document.getElementById('lu').value.trim();
   const pw=document.getElementById('lp').value;
-  if(USERS[u]&&USERS[u].pass===pw){
-    const info=USERS[u];
-    currentUser={isAdmin:true,id:null,name:info.name,role:info.role,initials:info.initials,noDash:info.noDash||false};
-    finishLogin();
-    return;
-  }
+  const btn=document.getElementById('lbtn');
+  if(btn){btn.disabled=true;}
   try{
-    const r=await fetch(`${SB}/rest/v1/stradale_empleados?usuario=eq.${encodeURIComponent(u)}&password=eq.${encodeURIComponent(pw)}`,{headers:H});
-    const rows=r.ok?await r.json():[];
-    if(rows.length){
-      const emp=rows[0];
-      currentUser={isAdmin:false,id:emp.id,name:emp.nombre,role:'Trabajador',initials:initialsOf(emp.nombre)};
-      finishLogin();
+    const resp=await fetch('https://airmate-phi.vercel.app/api/stradale-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({usuario:u,password:pw})});
+    const body=await resp.json();
+    if(!resp.ok||!body.token){
+      document.getElementById('lerr').style.display='block';
+      document.getElementById('lp').value='';
       return;
     }
-  }catch(e){}
-  document.getElementById('lerr').style.display='block';
-  document.getElementById('lp').value='';
+    await startAuthSession(body.token,body.refresh_token);
+    localStorage.setItem('stradale_session',JSON.stringify({token:body.token,refresh:body.refresh_token,usuario:body.usuario,nombre:body.nombre}));
+    const admin=ADMIN_ROLES[u];
+    currentUser=admin
+      ? {isAdmin:true,id:null,name:body.nombre,role:admin.role,initials:admin.initials,noDash:admin.noDash||false}
+      : {isAdmin:false,id:null,name:body.nombre,role:'Trabajador',initials:initialsOf(body.nombre)};
+    finishLogin();
+  }catch(e){
+    document.getElementById('lerr').style.display='block';
+    document.getElementById('lp').value='';
+  }finally{
+    if(btn)btn.disabled=false;
+  }
 }
+(function(){
+  try{
+    const s=JSON.parse(localStorage.getItem('stradale_session')||'null');
+    if(s&&s.token&&s.refresh){
+      startAuthSession(s.token,s.refresh).then(()=>{
+        const admin=ADMIN_ROLES[s.usuario];
+        currentUser=admin
+          ? {isAdmin:true,id:null,name:s.nombre,role:admin.role,initials:admin.initials,noDash:admin.noDash||false}
+          : {isAdmin:false,id:null,name:s.nombre,role:'Trabajador',initials:initialsOf(s.nombre)};
+        finishLogin();
+      });
+    }
+  }catch(e){}
+})();
 function finishLogin(){
   document.getElementById('uname').textContent=currentUser.name;
   document.getElementById('urole').textContent=currentUser.role;
@@ -972,6 +1013,7 @@ function applyRoleUI(){
   }
 }
 function logout(){
+  localStorage.removeItem('stradale_session');
   document.getElementById('app').style.display='none';
   document.getElementById('login').style.display='flex';
   document.getElementById('lp').value='';
@@ -991,10 +1033,10 @@ function nav(id,el){
 }
 
 // ── SUPABASE ──
-async function sbGet(t){const r=await fetch(`${SB}/rest/v1/${t}?order=created_at.desc`,{headers:H});return r.ok?r.json():[];}
-async function sbPost(t,d){const r=await fetch(`${SB}/rest/v1/${t}`,{method:'POST',headers:H,body:JSON.stringify(d)});return r.json();}
-async function sbPatch(t,id,d){const r=await fetch(`${SB}/rest/v1/${t}?id=eq.${id}`,{method:'PATCH',headers:H,body:JSON.stringify(d)});return r.json();}
-async function sbDel(t,id){await fetch(`${SB}/rest/v1/${t}?id=eq.${id}`,{method:'DELETE',headers:{...H,Prefer:'return=minimal'}});}
+async function sbGet(t){const r=await fetch(`${SB}/rest/v1/${t}?order=created_at.desc`,{headers:H()});return r.ok?r.json():[];}
+async function sbPost(t,d){const r=await fetch(`${SB}/rest/v1/${t}`,{method:'POST',headers:H(),body:JSON.stringify(d)});return r.json();}
+async function sbPatch(t,id,d){const r=await fetch(`${SB}/rest/v1/${t}?id=eq.${id}`,{method:'PATCH',headers:H(),body:JSON.stringify(d)});return r.json();}
+async function sbDel(t,id){await fetch(`${SB}/rest/v1/${t}?id=eq.${id}`,{method:'DELETE',headers:{...H(),Prefer:'return=minimal'}});}
 
 // ── LOAD ──
 async function loadAll(){
